@@ -1,0 +1,2367 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#04101c">
+<title>DiagNova's Prediction — Your Wellbeing, Our Priority</title>
+<meta name="description" content="DiagNova's Prediction: Your Wellbeing, Our Priority. Educational, privacy-first health screening that maps symptoms and optional lab values to relevant conditions, specialists, and peer-reviewed research.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: { extend: {
+    colors: {
+      navy: { 800: '#0B1B2B', 900: '#061420', 950: '#030A12' },
+      teal: { 500: '#14B8A6', 600: '#0D9488', 700: '#0F766E' },
+      emerald: { 500: '#10B981', 600: '#059669' },
+    },
+    fontFamily: {
+      sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      display: ['"Instrument Sans"', 'Inter', 'sans-serif']
+    },
+    boxShadow: {
+      'premium': '0 24px 64px -16px rgba(11,27,43,0.16)',
+      'card': '0 4px 24px -8px rgba(11,27,43,0.08)',
+    }
+  }}
+};
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Instrument+Sans:wght@500;600;700&display=swap');
+
+:root{
+  --hero-bg:#04101c;
+  --accent:#14b8a6;
+}
+body{font-family:'Inter',sans-serif;transition:background-color .25s ease,color .25s ease}
+.font-display{font-family:'Instrument Sans','Inter',sans-serif;letter-spacing:-.02em}
+
+.view-section{animation:fadeUp .3s cubic-bezier(.2,.8,.2,1) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.toast{animation:toastIn .26s cubic-bezier(.2,.9,.3,1.2) both}
+@keyframes toastIn{from{opacity:0;transform:translateX(24px) scale(.96)}to{opacity:1;transform:none}}
+.toast.out{animation:toastOut .22s ease forwards}
+@keyframes toastOut{to{opacity:0;transform:translateX(24px) scale(.96)}}
+
+.sym-chip{transition:all .15s ease}
+.sym-chip:hover{transform:translateY(-1px)}
+
+.bar{height:8px;border-radius:99px;overflow:hidden;background:rgba(13,148,136,.12)}
+.dark .bar{background:rgba(45,212,191,.15)}
+.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#0d9488,#10b981);transition:width .9s cubic-bezier(.2,.8,.2,1)}
+
+.modal-overlay{animation:fadeIn .18s ease both}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-box{animation:modalIn .24s cubic-bezier(.2,.9,.3,1.15) both}
+@keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+
+.scroll-thin::-webkit-scrollbar{width:8px;height:8px}
+.scroll-thin::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:99px}
+.dark .scroll-thin::-webkit-scrollbar-thumb{background:#334155}
+
+input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 3px rgba(13,148,136,.18);border-color:#0d9488}
+.dark input:focus,.dark select:focus,.dark textarea:focus{box-shadow:0 0 0 3px rgba(45,212,191,.22);border-color:#2dd4bf}
+
+/* Hero ambient grid */
+.hero-grid{
+  background-image:
+    linear-gradient(rgba(45,212,191,.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45,212,191,.06) 1px, transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(ellipse 80% 70% at 50% 40%, black 40%, transparent 80%);
+  -webkit-mask-image:radial-gradient(ellipse 80% 70% at 50% 40%, black 40%, transparent 80%);
+}
+
+.glow-teal{box-shadow:0 0 80px -20px rgba(20,184,166,.5)}
+.glow-emerald{box-shadow:0 0 80px -20px rgba(16,185,129,.4)}
+
+/* Animated preview bars */
+@keyframes slideIn{from{width:0!important;opacity:0}to{opacity:1}}
+.preview-bar{animation:slideIn 1.2s cubic-bezier(.2,.8,.2,1) both}
+.preview-bar.delay-1{animation-delay:.3s}
+.preview-bar.delay-2{animation-delay:.6s}
+
+@media print{
+  body{background:#fff!important;color:#000!important}
+  .no-print{display:none!important}
+  .print-only{display:block!important}
+  .card-print{box-shadow:none!important;border:1px solid #ccc!important;break-inside:avoid}
+  .view-section{animation:none!important}
+  main{max-width:100%!important;padding:0!important}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
+}
+
+/* DiagNova polish + accessible authentication */
+.auth-backdrop{background:rgba(2,8,23,.72);backdrop-filter:blur(10px)}
+.auth-panel{animation:modalIn .22s cubic-bezier(.2,.8,.2,1) both}
+.auth-tab[aria-selected="true"]{background:#0d9488;color:#fff;border-color:#0d9488}
+button:focus-visible,a:focus-visible{outline:3px solid #2dd4bf;outline-offset:3px}
+button:disabled{opacity:.65;cursor:not-allowed}
+@media (max-width:640px){#authModal .auth-panel{max-height:92vh;overflow:auto}}
+/* Homepage visual refinement */
+#view-landing .group{transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+#view-landing .group:hover{transform:translateY(-3px);box-shadow:0 18px 45px -24px rgba(13,148,136,.28)}
+header{box-shadow:0 8px 28px -24px rgba(2,8,23,.35)}
+/* Premium brand and navigation header */
+header button[aria-label="DiagNova's Prediction home"]{transition:opacity .2s ease,transform .2s ease}
+header button[aria-label="DiagNova's Prediction home"]:hover{opacity:.96}
+header .max-w-7xl{display:flex;gap:.5rem}
+header button[aria-label="DiagNova's Prediction home"]{flex:0 0 auto;min-width:max-content}
+header nav{flex:1 1 auto;width:auto;min-width:0;flex-shrink:1;justify-content:flex-start;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:none;scroll-padding-inline:.25rem;padding-inline:.25rem}
+header nav::-webkit-scrollbar{display:none}
+header nav button{white-space:nowrap;flex:0 0 auto;padding-left:.5rem;padding-right:.5rem}
+header .max-w-7xl>div.flex.items-center.space-x-2{flex:0 0 auto;min-width:max-content}
+@media(min-width:769px) and (max-width:1250px){
+  header .max-w-7xl{gap:.35rem;padding-left:1rem;padding-right:1rem}
+  header nav{justify-content:flex-start}
+  header nav button{font-size:12px;padding-left:.35rem;padding-right:.35rem}
+  header button[aria-label="DiagNova's Prediction home"]{gap:.55rem}
+  header button[aria-label="DiagNova's Prediction home"] .font-display{font-size:17px}
+}
+@media(max-width:420px){header .max-w-7xl{gap:.5rem} header button[aria-label="DiagNova's Prediction home"]{gap:.55rem} header button[aria-label="DiagNova's Prediction home"] .font-display{font-size:15px} header button[aria-label="DiagNova's Prediction home"] .tracking-\[.14em\]{letter-spacing:.08em}}
+
+
+
+/* Responsive layout safeguards: prevent text collisions on phones, tablets and laptops */
+*,*::before,*::after{box-sizing:border-box}
+html{width:100%;max-width:100%;overflow-x:clip;text-size-adjust:100%;-webkit-text-size-adjust:100%}
+body{width:100%;min-width:0;max-width:100%;overflow-x:clip}
+main,header,footer,section,article,aside,nav,form,fieldset{min-width:0;max-width:100%}
+img,svg,video,canvas,iframe{max-width:100%}
+img,video{height:auto}
+.flex>*{min-width:0}
+.grid>*{min-width:0}
+button,a,[role="button"]{overflow-wrap:normal;word-break:normal}
+header nav button{white-space:nowrap;word-break:keep-all;overflow-wrap:normal;flex-shrink:0}
+header nav button[aria-current="page"]{position:relative;z-index:1;flex-shrink:0;color:#14b8a6;background:rgba(20,184,166,.12);box-shadow:inset 0 -2px 0 #14b8a6}
+header nav button:focus-visible{outline:2px solid #2dd4bf;outline-offset:2px}
+input,select,textarea{min-width:0;max-width:100%;font:inherit}
+textarea{resize:vertical}
+table{max-width:100%;border-collapse:collapse}
+pre,code{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
+.view-section h1,.view-section h2,.view-section h3,.view-section h4,.view-section p,.view-section label,.view-section li{overflow-wrap:break-word}
+
+@media(max-width:768px){
+  .container,.max-w-7xl,.max-w-6xl,.max-w-5xl,.max-w-4xl,.max-w-3xl,.max-w-2xl,.max-w-xl{max-width:100%}
+  header .max-w-7xl{flex-wrap:wrap;row-gap:.5rem;padding-top:.6rem;padding-bottom:.6rem}
+  header button[aria-label="DiagNova's Prediction home"]{flex:1 1 100%;max-width:100%;min-width:0}
+  header button[aria-label="DiagNova's Prediction home"] .font-display{white-space:nowrap;overflow-wrap:normal}
+  header nav{display:flex;flex-wrap:nowrap;gap:.15rem;min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;padding-bottom:2px}
+  header nav button{white-space:nowrap;flex:0 0 auto;padding-left:.65rem;padding-right:.65rem}
+  header .max-w-7xl>div,header .max-w-7xl>button{min-width:0}
+  .view-section{min-width:0;max-width:100%}
+  .view-section .flex:not(.flex-col){flex-wrap:wrap}
+  .view-section .grid{min-width:0}
+  .view-section [class*="grid-cols-"]{grid-template-columns:minmax(0,1fr)}
+  .view-section [class*="sm:grid-cols-"],.view-section [class*="md:grid-cols-"],.view-section [class*="lg:grid-cols-"]{grid-template-columns:minmax(0,1fr)}
+  .view-section h1{font-size:clamp(1.8rem,7vw,3rem);line-height:1.12}
+  .view-section h2{line-height:1.2}
+  .view-section button,.view-section a{max-width:100%;white-space:normal}
+  .view-section input,.view-section select,.view-section textarea{width:100%}
+  .overflow-x-auto{max-width:100%;overflow-x:auto}
+}
+@media(max-width:480px){
+  header .max-w-7xl{padding-left:.75rem;padding-right:.75rem;gap:.5rem}
+  header button[aria-label="DiagNova's Prediction home"]{gap:.5rem}
+  header button[aria-label="DiagNova's Prediction home"] .font-display{font-size:clamp(13px,4vw,16px);letter-spacing:-.035em;line-height:1.15}
+  header button[aria-label="DiagNova's Prediction home"] .tracking-\[.14em\]{font-size:8px;letter-spacing:.06em;white-space:normal}
+  .view-section .px-7,.view-section .px-6,.view-section .px-5{padding-left:1rem;padding-right:1rem}
+  .view-section .gap-8,.view-section .gap-10{gap:1rem}
+  .view-section .text-4xl{font-size:clamp(1.75rem,8vw,2.25rem);line-height:1.12}
+  .view-section .text-5xl,.view-section .text-6xl{font-size:clamp(2rem,9vw,2.75rem);line-height:1.1}
+  .modal-box,.auth-panel{width:calc(100vw - 1rem);max-width:calc(100vw - 1rem);min-width:0}
+}
+@media(min-width:481px) and (max-width:768px){
+  .view-section [class*="grid-cols-2"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(min-width:769px) and (max-width:1100px){
+  header .max-w-7xl{gap:.5rem;padding-left:1rem;padding-right:1rem}
+  header nav{gap:0;flex:1 1 0%;min-width:0;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start}
+  header nav button{padding-left:.55rem;padding-right:.55rem}
+  .view-section .grid>*{min-width:0}
+}
+
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-[#070d16] dark:text-slate-100 antialiased min-h-screen flex flex-col">
+
+<!-- NAVBAR -->
+<header class="no-print sticky top-0 z-40 bg-white/90 dark:bg-[#070d16]/90 backdrop-blur-2xl border-b border-slate-200/80 dark:border-slate-800/80 shadow-[0_10px_35px_-28px_rgba(13,148,136,.55)]">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[76px] py-2 flex items-center justify-between gap-3">
+    <button aria-label="DiagNova's Prediction home" class="group flex items-center gap-3 cursor-pointer min-w-0 text-left" onclick="switchView('landing')">
+      <div class="relative shrink-0 w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-teal-500 via-teal-600 to-emerald-500 p-[1.5px] shadow-lg shadow-teal-600/20 transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-teal-500/35">
+        <div class="w-full h-full rounded-[14px] bg-gradient-to-br from-teal-600 to-emerald-600 flex items-center justify-center text-white">
+          <i data-lucide="activity" class="w-6 h-6"></i>
+        </div>
+      </div>
+      <div class="min-w-0">
+        <div class="font-display text-[17px] sm:text-[20px] leading-tight font-extrabold tracking-[-.045em] whitespace-nowrap">
+          <span class="text-slate-900 dark:text-white">DiagNova's</span><span class="text-teal-600 dark:text-teal-400"> Prediction</span>
+        </div>
+        <div class="mt-1 flex items-center gap-1.5 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 tracking-[.14em] uppercase font-bold whitespace-nowrap">
+          <i data-lucide="heart-pulse" class="w-3 h-3 text-teal-600 dark:text-teal-400"></i>
+          <span>Clinical screening support</span>
+        </div>
+      </div>
+    </button>
+    <nav class="hidden md:flex items-center space-x-1 text-sm font-medium text-slate-600 dark:text-slate-300">
+      <button aria-current="page" onclick="switchView('landing')" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-teal-600 dark:hover:text-teal-400 transition">Home</button>
+      <button onclick="switchView('screening')" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-teal-600 dark:hover:text-teal-400 transition">Screening</button>
+      <button onclick="switchView('clinical')" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-teal-600 dark:hover:text-teal-400 transition">Clinical Support</button>
+      <button onclick="switchView('records')" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-teal-600 dark:hover:text-teal-400 transition">Records</button>
+      <button onclick="switchView('profile')" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-teal-600 dark:hover:text-teal-400 transition">Patient Profile</button>
+      <button onclick="switchView('methodology')" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-teal-600 dark:hover:text-teal-400 transition">Methodology</button>
+      <button onclick="switchView('privacy')" class="px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-teal-600 dark:hover:text-teal-400 transition">Privacy</button>
+    </nav>
+    <div class="flex items-center space-x-2">
+      <button id="authNavBtn" onclick="openAuthModal('signin')" class="px-3 py-2 rounded-lg border border-teal-200 dark:border-teal-900 text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-950/50 text-sm font-semibold transition whitespace-nowrap">Sign in</button>
+      <button id="themeBtn" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme"
+              class="w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center justify-center">
+        <i data-lucide="moon" class="w-4 h-4"></i>
+      </button>
+      <button onclick="switchView('screening')" class="bg-slate-900 hover:bg-slate-800 dark:bg-teal-600 dark:hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition flex items-center space-x-2">
+        <i data-lucide="stethoscope" class="w-4 h-4"></i>
+        <span class="hidden sm:inline">Start Screening</span>
+        <span class="sm:hidden">Screen</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="flex-grow">
+
+<!-- ============================== LANDING ============================== -->
+<section id="view-landing" class="view-section">
+
+  <!-- HERO -->
+  <div class="relative overflow-hidden bg-[#04101c] text-white">
+    <div class="absolute inset-0 hero-grid"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-teal-950/40 via-transparent to-emerald-950/30"></div>
+    <div class="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-teal-500/10 blur-3xl glow-teal"></div>
+    <div class="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full bg-emerald-500/5 blur-3xl"></div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+      <div class="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+
+        <!-- Left: Copy -->
+        <div class="lg:col-span-7">
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur text-xs font-semibold text-teal-200 mb-7">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            <span>EVERY NEED ONE HEALTH DESTINATION</span>
+          </div>
+
+          <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] mb-6">
+            <span class="block text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-teal-200 to-emerald-300">YOUR WELLBEING,</span>
+            <span class="block mt-2 text-amber-300">OUR PRIORITY</span>
+          </h1>
+
+          <p class="text-base sm:text-lg text-slate-300/90 max-w-xl mb-9 leading-relaxed font-light">
+            DiagNova's Prediction translates your symptoms and optional lab values into structured, transparent insights — relevant conditions, suggested specialists, and peer-reviewed research. All in your browser, all under your control.
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-3 mb-10">
+            <button onclick="switchView('screening')" class="group bg-teal-500 hover:bg-teal-400 text-slate-950 px-7 py-3.5 rounded-xl font-semibold shadow-lg shadow-teal-500/30 transition flex items-center justify-center gap-2">
+              <span>Start Health Screening</span>
+              <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-0.5"></i>
+            </button>
+            <a href="#how-it-works" class="bg-white/5 hover:bg-white/10 text-white border border-white/15 px-6 py-3.5 rounded-xl font-medium transition text-center backdrop-blur">
+              See how it works
+            </a>
+            <button onclick="switchView('clinical')" class="bg-white/5 hover:bg-white/10 text-white border border-teal-300/40 px-6 py-3.5 rounded-xl font-semibold transition text-center backdrop-blur inline-flex items-center justify-center gap-2"><i data-lucide="stethoscope" class="w-4 h-4"></i>Clinical Support</button>
+          </div>
+
+          <!-- Trust strip -->
+          <div class="flex flex-wrap items-center gap-x-7 gap-y-3 text-xs text-slate-400">
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="shield-check" class="w-4 h-4 text-teal-400"></i>
+              <span>No data leaves your device</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="lock" class="w-4 h-4 text-teal-400"></i>
+              <span>Screen without an account</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="book-open" class="w-4 h-4 text-teal-400"></i>
+              <span>PubMed-sourced references</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Preview card -->
+        <div class="lg:col-span-5 relative">
+          <div class="absolute -inset-4 bg-gradient-to-br from-teal-500/20 to-emerald-500/10 rounded-3xl blur-2xl"></div>
+          <div class="relative bg-white rounded-2xl shadow-2xl overflow-hidden border border-white/10">
+            <!-- Card header -->
+            <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-600 to-emerald-500 flex items-center justify-center">
+                  <i data-lucide="file-check-2" class="w-4 h-4 text-white"></i>
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-slate-900">Screening Report</div>
+                  <div class="text-[10px] text-slate-500 flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Complete
+                  </div>
+                </div>
+              </div>
+              <div class="text-[10px] font-mono text-slate-400">#DN-2847</div>
+            </div>
+            <!-- Card body -->
+            <div class="p-5 space-y-4 bg-slate-50/50">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="text-xs font-semibold text-slate-700">Type 2 Diabetes Mellitus</div>
+                  <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">78%</span>
+                </div>
+                <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                  <div class="h-full preview-bar rounded-full bg-gradient-to-r from-teal-500 to-emerald-500" style="width:78%"></div>
+                </div>
+                <div class="text-[10px] text-slate-500 mt-1.5">Endocrinologist · 3 symptoms + 1 lab</div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="text-xs font-semibold text-slate-700">Hypertension</div>
+                  <span class="text-[10px] font-bold text-teal-700 bg-teal-100 px-2 py-0.5 rounded-full">61%</span>
+                </div>
+                <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                  <div class="h-full preview-bar delay-1 rounded-full bg-gradient-to-r from-teal-500 to-emerald-500" style="width:61%"></div>
+                </div>
+                <div class="text-[10px] text-slate-500 mt-1.5">Cardiologist · 2 symptoms + BP reading</div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="text-xs font-semibold text-slate-700">Iron Deficiency Anemia</div>
+                  <span class="text-[10px] font-bold text-slate-600 bg-slate-200 px-2 py-0.5 rounded-full">45%</span>
+                </div>
+                <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                  <div class="h-full preview-bar delay-2 rounded-full bg-gradient-to-r from-slate-400 to-slate-500" style="width:45%"></div>
+                </div>
+                <div class="text-[10px] text-slate-500 mt-1.5">Hematologist · 2 symptoms</div>
+              </div>
+            </div>
+            <!-- Card footer -->
+            <div class="px-5 py-3 bg-white border-t border-slate-100 flex items-center justify-between">
+              <div class="flex items-center gap-1.5 text-[10px] text-slate-500">
+                <i data-lucide="user-check" class="w-3 h-3 text-teal-600"></i>
+                <span>Suggested: <span class="font-semibold text-slate-700">Endocrinologist</span></span>
+              </div>
+              <div class="flex items-center gap-0.5">
+                <div class="w-1.5 h-1.5 rounded-full bg-teal-500"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-teal-500"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Floating badge -->
+          <div class="absolute -bottom-4 -left-4 bg-white rounded-xl shadow-lg px-3 py-2 flex items-center gap-2 border border-slate-100">
+            <div class="w-6 h-6 rounded-lg bg-emerald-100 flex items-center justify-center">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i>
+            </div>
+            <div>
+              <div class="text-[10px] font-bold text-slate-900">Local-only</div>
+              <div class="text-[9px] text-slate-500">Zero tracking</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- TRUST BAND -->
+  <div class="bg-white dark:bg-[#0b1220] border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left">
+        <div class="flex items-center gap-3 justify-center md:justify-start">
+          <i data-lucide="shield-check" class="w-5 h-5 text-teal-600 dark:text-teal-400 flex-shrink-0"></i>
+          <div>
+            <div class="text-sm font-semibold text-slate-900 dark:text-white">Privacy by design</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">Nothing leaves your browser</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 justify-center md:justify-start">
+          <i data-lucide="scale" class="w-5 h-5 text-teal-600 dark:text-teal-400 flex-shrink-0"></i>
+          <div>
+            <div class="text-sm font-semibold text-slate-900 dark:text-white">Transparent rules</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">Every match shows its reasoning</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 justify-center md:justify-start">
+          <i data-lucide="book-open" class="w-5 h-5 text-teal-600 dark:text-teal-400 flex-shrink-0"></i>
+          <div>
+            <div class="text-sm font-semibold text-slate-900 dark:text-white">PubMed-linked</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">Peer-reviewed references</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 justify-center md:justify-start">
+          <i data-lucide="shield-alert" class="w-5 h-5 text-teal-600 dark:text-teal-400 flex-shrink-0"></i>
+          <div>
+            <div class="text-sm font-semibold text-slate-900 dark:text-white">Red-flag safety net</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">Emergency rules run first</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="bg-slate-50 dark:bg-[#070d16]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-10 text-center">
+        <div>
+          <div class="font-display text-4xl lg:text-5xl font-bold text-teal-600 dark:text-teal-400 mb-1">9+</div>
+          <div class="text-xs uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400">Conditions mapped</div>
+        </div>
+        <div>
+          <div class="font-display text-4xl lg:text-5xl font-bold text-teal-600 dark:text-teal-400 mb-1">15</div>
+          <div class="text-xs uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400">Symptoms structured</div>
+        </div>
+        <div>
+          <div class="font-display text-4xl lg:text-5xl font-bold text-teal-600 dark:text-teal-400 mb-1">5</div>
+          <div class="text-xs uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400">Lab markers supported</div>
+        </div>
+        <div>
+          <div class="font-display text-4xl lg:text-5xl font-bold text-teal-600 dark:text-teal-400 mb-1">0</div>
+          <div class="text-xs uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400">Bytes sent to a server</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="bg-white dark:bg-[#0b1220] border-y border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div class="max-w-2xl mb-14">
+        <div class="text-xs font-semibold uppercase tracking-widest text-teal-600 dark:text-teal-400 mb-3">What DiagNova's Prediction does</div>
+        <h2 class="font-display text-3xl lg:text-4xl font-bold text-navy-900 dark:text-white mb-4 tracking-tight">
+          Built to inform — never to diagnose.
+        </h2>
+        <p class="text-slate-600 dark:text-slate-400 text-base leading-relaxed">
+          A clinical-grade interface for exploring symptom patterns. Every output is a starting point for a real conversation with a clinician.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-5">
+        <div class="group bg-slate-50 dark:bg-slate-900/60 p-7 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-teal-300 dark:hover:border-teal-700 hover:shadow-card transition-all">
+          <div class="w-11 h-11 rounded-xl bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+            <i data-lucide="sliders-horizontal" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-display text-lg font-bold text-navy-900 dark:text-white mb-2">Symptom + Lab Analysis</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Combine observed symptoms with optional lab values — glucose, hemoglobin, LDL, and blood pressure — for a structured review.</p>
+        </div>
+
+        <div class="group bg-slate-50 dark:bg-slate-900/60 p-7 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-teal-300 dark:hover:border-teal-700 hover:shadow-card transition-all">
+          <div class="w-11 h-11 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+            <i data-lucide="stethoscope" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-display text-lg font-bold text-navy-900 dark:text-white mb-2">Specialist Guidance</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">See which specialist categories align with your inputs — endocrinology, cardiology, hematology, neurology and more.</p>
+        </div>
+
+        <div class="group bg-slate-50 dark:bg-slate-900/60 p-7 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-teal-300 dark:hover:border-teal-700 hover:shadow-card transition-all">
+          <div class="w-11 h-11 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+            <i data-lucide="book-open" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-display text-lg font-bold text-navy-900 dark:text-white mb-2">Research You Can Read</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Direct PubMed search links for every matched condition, so you can explore the peer-reviewed literature yourself.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div id="how-it-works" class="bg-slate-50 dark:bg-[#070d16]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div class="max-w-2xl mb-14">
+        <div class="text-xs font-semibold uppercase tracking-widest text-teal-600 dark:text-teal-400 mb-3">How it works</div>
+        <h2 class="font-display text-3xl lg:text-4xl font-bold text-navy-900 dark:text-white mb-4 tracking-tight">
+          A clearer path to care.
+        </h2>
+        <p class="text-slate-600 dark:text-slate-400 text-base leading-relaxed">Describe your symptoms, review educational guidance, and explore next steps. Sign in to save your profile and screening history.</p>
+      </div>
+
+      <div class="grid md:grid-cols-4 gap-4">
+        <div class="relative bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-8 h-8 rounded-lg bg-navy-900 dark:bg-teal-600 text-white flex items-center justify-center text-xs font-bold">01</div>
+            <div class="text-[10px] uppercase tracking-widest font-bold text-slate-400">Step</div>
+          </div>
+          <h4 class="font-display font-bold text-navy-900 dark:text-white mb-1.5">Select symptoms</h4>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Choose from a structured symptom vocabulary or search dynamically.</p>
+        </div>
+        <div class="relative bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-8 h-8 rounded-lg bg-navy-900 dark:bg-teal-600 text-white flex items-center justify-center text-xs font-bold">02</div>
+            <div class="text-[10px] uppercase tracking-widest font-bold text-slate-400">Step</div>
+          </div>
+          <h4 class="font-display font-bold text-navy-900 dark:text-white mb-1.5">Add optional labs</h4>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Input blood test values if available. Missing values are never treated as zero.</p>
+        </div>
+        <div class="relative bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-8 h-8 rounded-lg bg-navy-900 dark:bg-teal-600 text-white flex items-center justify-center text-xs font-bold">03</div>
+            <div class="text-[10px] uppercase tracking-widest font-bold text-slate-400">Step</div>
+          </div>
+          <h4 class="font-display font-bold text-navy-900 dark:text-white mb-1.5">Safety pre-check</h4>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Emergency red-flag rules execute first to ensure urgent symptoms are never missed.</p>
+        </div>
+        <div class="relative bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-8 h-8 rounded-lg bg-navy-900 dark:bg-teal-600 text-white flex items-center justify-center text-xs font-bold">04</div>
+            <div class="text-[10px] uppercase tracking-widest font-bold text-slate-400">Step</div>
+          </div>
+          <h4 class="font-display font-bold text-navy-900 dark:text-white mb-1.5">Review &amp; research</h4>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Explore matched conditions, specialist guidance, and PubMed citations.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONDITIONS COVERED -->
+  <div class="bg-white dark:bg-[#0b1220] border-y border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div class="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+        <div class="lg:col-span-5">
+          <div class="text-xs font-semibold uppercase tracking-widest text-teal-600 dark:text-teal-400 mb-3">Condition coverage</div>
+          <h2 class="font-display text-3xl lg:text-4xl font-bold text-navy-900 dark:text-white mb-4 tracking-tight">
+            Grounded in common, high-impact areas.
+          </h2>
+          <p class="text-slate-600 dark:text-slate-400 text-base leading-relaxed mb-6">
+            DiagNova's Prediction's rule engine covers a curated set of conditions across endocrinology, cardiology, hematology, neurology, and more — chosen for their high prevalence and clear rule structure.
+          </p>
+          <button onclick="switchView('screening')" class="text-sm font-semibold text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 flex items-center gap-1.5">
+            <span>Run your screening</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <div class="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div class="flex items-center gap-2.5 px-4 py-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800">
+            <i data-lucide="droplets" class="w-4 h-4 text-teal-600 dark:text-teal-400 flex-shrink-0"></i>
+            <span class="text-xs font-medium text-slate-700 dark:text-slate-300">Type 2 Diabetes</span>
+          </div>
+          <div class="flex items-center gap-2.5 px-4 py-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800">
+            <i data-lucide="heart-pulse" class="w-4 h-4 text-teal-600 dark:text-teal-400 flex-shrink-0"></i>
+            <span class="text-xs font-medium text-slate-700 dark:text-slate-300">Hypertension</span>
+          </div>
+          <div class="flex items-center gap-2.5 px-4 py-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800">
+            <i data-lucide="activity" class="w-4 h-4 text-teal-600 dark:text-teal-400 flex-shrink-0"></i>
+            <span class="text-xs font-medium text-slate-700 dark:text-slate-300">Anemia</span>
+          </div>
+          <div class="flex items-center gap-2.5 px-4 py-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800">
+            <i data-lucide="heart" class="w-4 h-4 text-teal-600 dark:text-teal-400 flex-shrink-0"></i>
+            <span class="text-xs font-medium text-slate-700 dark:text-slate-300">Cardiovascular risk</span>
+          </div>
+          <div class="flex items-center gap-2.5 px-4 py-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800">
+            <i data-lucide="brain" class="w-4 h-4 text-teal-600 dark:text-teal-400 flex-shrink-0"></i>
+            <span class="text-xs font-medium text-slate-700 dark:text-slate-300">Migraine</span>
+          </div>
+          <div class="flex items-center gap-2.5 px-4 py-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800">
+            <i data-lucide="thermometer" class="w-4 h-4 text-teal-600 dark:text-teal-400 flex-shrink-0"></i>
+            <span class="text-xs font-medium text-slate-700 dark:text-slate-300">Thyroid</span>
+          </div>
+          <div class="flex items-center gap-2.5 px-4 py-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800">
+            <i data-lucide="wind" class="w-4 h-4 text-teal-600 dark:text-teal-400 flex-shrink-0"></i>
+            <span class="text-xs font-medium text-slate-700 dark:text-slate-300">Respiratory</span>
+          </div>
+          <div class="flex items-center gap-2.5 px-4 py-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800">
+            <i data-lucide="utensils" class="w-4 h-4 text-teal-600 dark:text-teal-400 flex-shrink-0"></i>
+            <span class="text-xs font-medium text-slate-700 dark:text-slate-300">Gastrointestinal</span>
+          </div>
+          <div class="flex items-center gap-2.5 px-4 py-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800">
+            <i data-lucide="sparkles" class="w-4 h-4 text-teal-600 dark:text-teal-400 flex-shrink-0"></i>
+            <span class="text-xs font-medium text-slate-700 dark:text-slate-300">Anxiety</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINAL CTA -->
+  <div class="bg-[#04101c] text-white relative overflow-hidden">
+    <div class="absolute inset-0 hero-grid opacity-50"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-teal-500/10 blur-3xl"></div>
+    <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-teal-200 mb-6">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+        Free · Account optional
+      </div>
+      <h2 class="font-display text-3xl lg:text-5xl font-bold tracking-tight mb-5 leading-tight">
+        A clearer starting point<br>for your next conversation.
+      </h2>
+      <p class="text-slate-300/90 max-w-xl mx-auto mb-9 text-base lg:text-lg font-light">
+        Two minutes. Private by default. Structured enough to walk into an appointment with context.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <button onclick="switchView('screening')" class="bg-teal-500 hover:bg-teal-400 text-slate-950 px-8 py-3.5 rounded-xl font-semibold shadow-lg shadow-teal-500/30 transition flex items-center justify-center gap-2">
+          <i data-lucide="play" class="w-4 h-4"></i>
+          <span>Start Screening</span>
+        </button>
+        <button onclick="switchView('methodology')" class="bg-white/5 hover:bg-white/10 text-white border border-white/15 px-6 py-3.5 rounded-xl font-medium transition">
+          Read the methodology
+        </button>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================== CLINICAL SUPPORT ============================== -->
+<section id="view-clinical" class="view-section hidden max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#061420] via-[#0b3440] to-teal-800 text-white p-7 sm:p-10 mb-8 shadow-xl">
+    <div class="absolute -right-10 -top-10 w-64 h-64 rounded-full bg-teal-300/10 blur-2xl"></div>
+    <div class="relative max-w-3xl">
+      <span class="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/15 px-3 py-1.5 text-xs font-semibold tracking-wide"><i data-lucide="heart-pulse" class="w-4 h-4"></i> PATIENT CLINICAL SUPPORT</span>
+      <h2 class="font-display text-3xl sm:text-4xl font-bold mt-5 mb-3">Find the right care, with confidence.</h2>
+      <p class="text-teal-50/90 leading-relaxed max-w-2xl">Explore specialist care, prepare for an appointment, and keep follow-up actions in one place. DiagNova helps you navigate care—it does not diagnose or replace a clinician.</p>
+      <div class="flex flex-wrap gap-3 mt-6"><a href="#doctor-directory" onclick="document.getElementById('doctor-directory').scrollIntoView({behavior:'smooth'})" class="inline-flex items-center gap-2 bg-white text-teal-900 px-5 py-3 rounded-xl text-sm font-bold hover:bg-teal-50"><i data-lucide="search" class="w-4 h-4"></i>Find a specialist</a><button onclick="openCareRequest()" class="inline-flex items-center gap-2 bg-teal-300 text-slate-950 px-5 py-3 rounded-xl text-sm font-bold hover:bg-teal-200"><i data-lucide="calendar-plus" class="w-4 h-4"></i>Request an appointment</button></div>
+    </div>
+  </div>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+    <button onclick="setClinicalMode('Online consultation')" class="text-left bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 hover:border-teal-400 transition shadow-sm"><span class="w-11 h-11 rounded-xl bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300 flex items-center justify-center mb-4"><i data-lucide="video" class="w-5 h-5"></i></span><h3 class="font-bold mb-1">Online consultation</h3><p class="text-sm text-slate-500 dark:text-slate-400">Request a remote video or voice visit with a clinician.</p></button>
+    <button onclick="setClinicalMode('Clinic visit')" class="text-left bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 hover:border-teal-400 transition shadow-sm"><span class="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 flex items-center justify-center mb-4"><i data-lucide="hospital" class="w-5 h-5"></i></span><h3 class="font-bold mb-1">Clinic appointment</h3><p class="text-sm text-slate-500 dark:text-slate-400">Prepare a request for an in-person consultation.</p></button>
+    <button onclick="switchView('records')" class="text-left bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 hover:border-teal-400 transition shadow-sm"><span class="w-11 h-11 rounded-xl bg-violet-50 dark:bg-violet-950 text-violet-700 dark:text-violet-300 flex items-center justify-center mb-4"><i data-lucide="folder-heart" class="w-5 h-5"></i></span><h3 class="font-bold mb-1">Health records</h3><p class="text-sm text-slate-500 dark:text-slate-400">Review your saved screening history and prepare questions.</p></button>
+    <button onclick="switchView('profile')" class="text-left bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 hover:border-teal-400 transition shadow-sm"><span class="w-11 h-11 rounded-xl bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 flex items-center justify-center mb-4"><i data-lucide="clipboard-plus" class="w-5 h-5"></i></span><h3 class="font-bold mb-1">Patient profile</h3><p class="text-sm text-slate-500 dark:text-slate-400">Keep allergies, medicines, and history ready for your visit.</p></button>
+  </div>
+  <div id="doctor-directory" class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 sm:p-7 shadow-sm">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6"><div><p class="text-xs uppercase tracking-[.18em] text-teal-600 dark:text-teal-400 font-bold mb-2">Care directory</p><h3 class="font-display text-2xl font-bold">Find a doctor by specialty</h3><p class="text-sm text-slate-500 dark:text-slate-400 mt-2">Search by specialty or preferred area. Directory entries below are demonstration listings, not verified or bookable doctors.</p></div><button onclick="openCareRequest()" class="shrink-0 inline-flex justify-center items-center gap-2 px-4 py-3 rounded-xl bg-teal-600 text-white text-sm font-semibold hover:bg-teal-700"><i data-lucide="calendar-check" class="w-4 h-4"></i>Appointment request</button></div>
+    <div class="grid md:grid-cols-[1fr_220px_180px] gap-3 mb-6"><label class="relative"><i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i><input id="clinicalSearch" oninput="renderDoctorDirectory()" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-sm" placeholder="Search specialty or care type" aria-label="Search doctors"></label><select id="clinicalModeFilter" onchange="renderDoctorDirectory()" class="w-full px-3 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-sm"><option value="all">All consultation types</option><option>Online consultation</option><option>Clinic visit</option><option>Home care inquiry</option></select><select id="clinicalArea" onchange="renderDoctorDirectory()" class="w-full px-3 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-sm"><option value="all">All areas</option><option>Dhaka</option><option>Chattogram</option><option>Remote / online</option></select></div>
+    <div id="doctorDirectoryList" class="grid md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+    <p class="mt-5 text-xs leading-relaxed text-slate-500 dark:text-slate-400"><strong>Important:</strong> These sample cards demonstrate the interface only. No real clinician availability, qualifications, fees, or appointments have been verified. Do not rely on sample listings to obtain care.</p>
+  </div>
+  <div class="grid lg:grid-cols-2 gap-5 mt-6">
+    <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6"><div class="flex gap-3 items-start"><span class="w-10 h-10 shrink-0 rounded-xl bg-rose-50 dark:bg-rose-950 text-rose-600 flex items-center justify-center"><i data-lucide="message-circle-question" class="w-5 h-5"></i></span><div><h3 class="font-bold text-lg">Questions for your clinician</h3><p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Write down what you want to ask before a visit.</p></div></div><textarea id="clinicalQuestions" rows="3" maxlength="1500" class="mt-4 w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-sm" placeholder="What symptoms should I mention? What medicines or reports should I bring?"></textarea><button onclick="saveClinicalQuestions()" class="mt-3 px-4 py-2.5 rounded-xl bg-slate-900 dark:bg-teal-600 text-white text-sm font-semibold">Save questions on this device</button><p id="clinicalQuestionStatus" class="hidden text-xs mt-2 text-teal-600" role="status"></p></div>
+    <div class="rounded-2xl border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 p-6"><div class="flex gap-3 items-start"><span class="w-10 h-10 shrink-0 rounded-xl bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 flex items-center justify-center"><i data-lucide="shield-alert" class="w-5 h-5"></i></span><div><h3 class="font-bold text-lg">Need urgent help?</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Do not wait for a directory reply if symptoms are severe or rapidly worsening.</p></div></div><p class="text-sm mt-4 leading-relaxed">For severe chest pain, trouble breathing, signs of stroke, heavy bleeding, or loss of consciousness, seek emergency medical care now. In Bangladesh, call <strong>999</strong> for emergency assistance.</p></div>
+  </div>
+</section>
+
+<!-- Clinical appointment request modal -->
+<div id="careRequestModal" class="fixed inset-0 z-[90] hidden items-center justify-center bg-slate-950/70 backdrop-blur-sm p-4" role="dialog" aria-modal="true" aria-labelledby="careRequestTitle"><div class="w-full max-w-xl max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-2xl"><div class="flex justify-between items-start gap-4 mb-5"><div><p class="text-xs uppercase tracking-widest text-teal-600 font-bold mb-2">Clinical support</p><h3 id="careRequestTitle" class="font-display text-2xl font-bold">Prepare an appointment request</h3><p class="text-sm text-slate-500 dark:text-slate-400 mt-2">This demo form does not send a booking to a clinic or doctor.</p></div><button onclick="closeCareRequest()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button></div><form id="careRequestForm" onsubmit="submitCareRequest(event)" class="space-y-4"><div><label class="block text-sm font-semibold mb-1.5" for="carePatientName">Your name *</label><input id="carePatientName" required maxlength="100" class="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm" placeholder="Full name"></div><div class="grid sm:grid-cols-2 gap-4"><div><label class="block text-sm font-semibold mb-1.5" for="carePatientPhone">Mobile number *</label><input id="carePatientPhone" required type="tel" maxlength="30" class="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm" placeholder="01XXXXXXXXX"></div><div><label class="block text-sm font-semibold mb-1.5" for="careSpecialty">Specialty *</label><select id="careSpecialty" required class="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm"><option value="">Choose specialty</option><option>General Medicine</option><option>Cardiology</option><option>Dermatology</option><option>Gynecology</option><option>Pediatrics</option><option>Neurology</option><option>Orthopedics</option><option>Mental Health</option><option>Other / not sure</option></select></div></div><div class="grid sm:grid-cols-2 gap-4"><div><label class="block text-sm font-semibold mb-1.5" for="careConsultType">Visit type</label><select id="careConsultType" class="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm"><option>Online consultation</option><option>Clinic visit</option><option>Home care inquiry</option></select></div><div><label class="block text-sm font-semibold mb-1.5" for="carePreferredDate">Preferred date</label><input id="carePreferredDate" type="date" class="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm"></div></div><div><label class="block text-sm font-semibold mb-1.5" for="careAreaInput">Preferred area (optional)</label><input id="careAreaInput" maxlength="100" class="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm" placeholder="e.g. Dhanmondi, Dhaka"></div><div><label class="block text-sm font-semibold mb-1.5" for="careReason">Brief reason for visit (optional)</label><textarea id="careReason" rows="3" maxlength="1000" class="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-sm" placeholder="Avoid sharing highly sensitive details in this demo form."></textarea></div><div class="rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 p-3 text-xs leading-relaxed">Demo only: your request is saved in this browser, not sent to a doctor. Do not use this for emergencies or share sensitive health information on a shared device.</div><button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white rounded-xl py-3 font-semibold">Save request on this device</button><p id="careRequestStatus" class="hidden text-sm rounded-xl p-3" role="status" aria-live="polite"></p></form></div></div>
+
+<!-- ============================== SCREENING ============================== -->
+<section id="view-screening" class="view-section hidden max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 sm:p-10">
+    <div class="border-b border-slate-200 dark:border-slate-800 pb-6 mb-8 flex items-center justify-between gap-4">
+      <div>
+        <div class="text-xs font-semibold uppercase tracking-widest text-teal-600 dark:text-teal-400 mb-1.5">Workspace</div>
+        <h2 class="font-display text-2xl font-bold text-navy-900 dark:text-white">Health Screening</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Provide your symptoms and optional laboratory values for structured educational screening.</p>
+      </div>
+      <button onclick="resetForm()" class="text-xs text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 font-medium flex items-center space-x-1 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg transition whitespace-nowrap">
+        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+        <span class="hidden sm:inline">Clear Form</span>
+      </button>
+    </div>
+
+    <form id="screening-form" onsubmit="handleScreeningSubmit(event)" class="space-y-8" novalidate>
+      <!-- AI symptom assistant: browser-side guided helper; no health text is sent to a server -->
+      <section class="rounded-2xl border border-teal-200 dark:border-teal-900 bg-gradient-to-br from-teal-50 via-white to-cyan-50 dark:from-teal-950/40 dark:via-slate-900 dark:to-cyan-950/30 p-5 sm:p-6" aria-labelledby="ai-assistant-title">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-teal-600 text-white flex items-center justify-center flex-shrink-0 shadow-sm"><i data-lucide="bot" class="w-6 h-6"></i></div>
+          <div class="flex-1">
+            <div class="flex flex-wrap items-center gap-2"><h3 id="ai-assistant-title" class="font-display text-lg font-bold text-slate-900 dark:text-white">AI Health Assistant</h3><span class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-teal-100 text-teal-800 dark:bg-teal-900/60 dark:text-teal-200">Text + Voice</span></div>
+            <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Describe your symptoms by typing or voice, and optionally attach a medical report for reference. This on-device demo provides general next-step guidance and helps add recognized symptoms to your screening.</p>
+          </div>
+        </div>
+        <label for="ai-symptom-text" class="block text-xs font-semibold text-slate-700 dark:text-slate-200 mb-2">What problem are you experiencing?</label>
+        <textarea id="ai-symptom-text" rows="4" maxlength="2000" placeholder="Example: I have had a headache and fever since yesterday. I also feel very tired…" class="w-full resize-y min-h-[110px] px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" aria-describedby="ai-privacy-note"></textarea>
+        <div class="flex flex-col sm:flex-row gap-2 mt-3">
+          <button type="button" onclick="startSymptomVoiceInput()" id="ai-voice-btn" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 text-sm font-semibold hover:border-teal-500 transition"><i data-lucide="mic" class="w-4 h-4"></i><span>Speak symptoms</span></button>
+          <button type="button" onclick="analyzeSymptomText()" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold transition shadow-sm"><i data-lucide="sparkles" class="w-4 h-4"></i><span>Get suggestions</span></button>
+          <button type="button" onclick="clearSymptomAssistant()" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-slate-500 dark:text-slate-300 text-sm font-medium hover:bg-white/70 dark:hover:bg-slate-800 transition">Clear</button>
+        </div>
+        <div class="mt-4 rounded-xl border border-dashed border-teal-300 dark:border-teal-800 bg-white/70 dark:bg-slate-900/60 p-4">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 shrink-0 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 flex items-center justify-center"><i data-lucide="file-up" class="w-5 h-5"></i></div>
+            <div class="min-w-0 flex-1">
+              <h4 class="text-sm font-semibold text-slate-900 dark:text-white">Add a patient document or report <span class="font-normal text-slate-500">(optional)</span></h4>
+              <p class="text-xs leading-relaxed text-slate-600 dark:text-slate-400 mt-1">Choose a lab report, prescription, discharge summary, or medical image to keep alongside this screening session.</p>
+              <label for="ai-report-files" class="mt-3 inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:border-teal-500 transition">
+                <i data-lucide="paperclip" class="w-4 h-4"></i><span>Choose files</span>
+              </label>
+              <input id="ai-report-files" type="file" class="sr-only" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,.csv,.doc,.docx" multiple aria-describedby="ai-report-help" onchange="handleScreeningFiles(this)">
+              <p id="ai-report-help" class="text-[11px] text-slate-500 dark:text-slate-400 mt-2">PDF, JPG, PNG, WEBP, DOC/DOCX, TXT or CSV · Up to 5 files, 10 MB each</p>
+              <div id="ai-report-file-list" class="hidden mt-3 space-y-2" aria-live="polite"></div>
+              <p id="ai-report-status" class="hidden text-xs mt-2" role="status" aria-live="polite"></p>
+            </div>
+          </div>
+        </div>
+        <p id="ai-privacy-note" class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400 mt-3"><i data-lucide="shield-check" class="w-3.5 h-3.5 inline align-text-bottom mr-1"></i>Voice input uses your browser's speech recognition when available. This built-in helper uses local keyword rules, not a connected medical AI model; it cannot diagnose or replace a clinician.</p>
+        <div id="ai-assistant-results" class="hidden mt-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 p-4" aria-live="polite">
+          <div id="ai-urgent-alert" class="hidden mb-3 rounded-lg border border-red-300 bg-red-50 text-red-800 dark:bg-red-950/40 dark:text-red-200 dark:border-red-900 p-3 text-sm font-semibold"></div>
+          <h4 class="font-semibold text-slate-900 dark:text-white text-sm mb-1">Suggested next steps</h4>
+          <p id="ai-suggestion-text" class="text-sm leading-relaxed text-slate-700 dark:text-slate-300"></p>
+          <div class="mt-3 p-3 rounded-lg bg-teal-50 dark:bg-teal-950/40 border border-teal-100 dark:border-teal-900/70"><div class="text-[10px] font-bold uppercase tracking-wider text-teal-700 dark:text-teal-300 mb-1">Doctor type to consider</div><p id="ai-doctor-text" class="text-sm font-semibold text-slate-900 dark:text-white"></p><p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">This is general guidance only. A general physician can help decide whether a specialist is needed.</p></div>
+          <div id="ai-detected-wrap" class="hidden mt-3"><div class="text-xs font-semibold text-slate-700 dark:text-slate-200 mb-2">Recognized symptoms</div><div id="ai-detected-symptoms" class="flex flex-wrap gap-2"></div><button type="button" onclick="applyAssistantSymptoms()" class="mt-3 inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 dark:bg-teal-600 text-white text-xs font-semibold hover:opacity-90"><i data-lucide="plus-circle" class="w-4 h-4"></i>Add recognized symptoms to screening</button></div>
+        </div>
+      </section>
+
+      <div class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
+        <h3 class="text-sm font-semibold text-navy-900 dark:text-white uppercase tracking-wider mb-4 flex items-center space-x-2">
+          <i data-lucide="user" class="w-4 h-4 text-teal-600 dark:text-teal-400"></i>
+          <span>Basic Information (Optional)</span>
+        </h3>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label for="input-age" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Age (Years)</label>
+            <input type="number" id="input-age" min="0" max="120" placeholder="e.g., 35"
+                   class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm">
+          </div>
+          <div>
+            <label for="input-sex" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Sex-Related Information</label>
+            <select id="input-sex" class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm">
+              <option value="">Prefer not to say / Unspecified</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-navy-900 dark:text-white mb-2 flex items-center justify-between">
+          <span class="flex items-center space-x-2">
+            <i data-lucide="activity" class="w-4 h-4 text-teal-600 dark:text-teal-400"></i>
+            <span>Select Symptoms <span class="text-red-500">*</span></span>
+          </span>
+          <span id="symptom-count" class="text-xs font-normal text-slate-500 dark:text-slate-400">0 selected</span>
+        </label>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Choose from common suggestions below or search for specific symptoms.</p>
+
+        <div class="relative mb-3">
+          <input type="text" id="symptom-search" placeholder="Search symptoms (e.g., fever, chest discomfort, fatigue)…" oninput="filterSymptoms(this.value)"
+                 class="w-full px-4 py-2.5 pl-10 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
+        </div>
+
+        <div id="selected-symptoms-container" class="flex flex-wrap gap-2 mb-3 p-3 bg-teal-50/50 dark:bg-teal-950/30 border border-teal-100 dark:border-teal-900/60 rounded-xl min-h-[52px] items-center">
+          <span id="no-symptoms-msg" class="text-xs text-slate-400 italic">No symptoms selected yet. Choose at least one symptom.</span>
+        </div>
+
+        <div id="symptom-chips" class="flex flex-wrap gap-2 max-h-48 overflow-y-auto scroll-thin p-1"></div>
+      </div>
+
+      <div class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
+        <h3 class="text-sm font-semibold text-navy-900 dark:text-white uppercase tracking-wider mb-1 flex items-center space-x-2">
+          <i data-lucide="flask-conical" class="w-4 h-4 text-teal-600 dark:text-teal-400"></i>
+          <span>Laboratory Values (Optional)</span>
+        </h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Leave blank if unavailable. Missing values are never treated as zero or normal.</p>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label for="lab-glucose" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Fasting Blood Glucose (mg/dL)</label>
+            <input type="number" step="0.1" id="lab-glucose" placeholder="e.g., 105"
+                   class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm">
+          </div>
+          <div>
+            <label for="lab-hemoglobin" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Hemoglobin (g/dL)</label>
+            <input type="number" step="0.1" id="lab-hemoglobin" placeholder="e.g., 13.5"
+                   class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm">
+          </div>
+          <div>
+            <label for="lab-ldl" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">LDL Cholesterol (mg/dL)</label>
+            <input type="number" step="0.1" id="lab-ldl" placeholder="e.g., 120"
+                   class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label for="lab-sysbp" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Systolic (mmHg)</label>
+              <input type="number" id="lab-sysbp" placeholder="120"
+                     class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm">
+            </div>
+            <div>
+              <label for="lab-diabp" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Diastolic (mmHg)</label>
+              <input type="number" id="lab-diabp" placeholder="80"
+                     class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4">
+        <label class="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-400 cursor-pointer select-none">
+          <input type="checkbox" id="save-record" checked class="mt-0.5 accent-teal-600">
+          <span><strong class="text-navy-900 dark:text-white">Save this screening</strong> to my local records history.</span>
+        </label>
+        <button type="submit" id="submit-btn"
+                class="w-full sm:w-auto bg-teal-600 hover:bg-teal-700 text-white px-8 py-3.5 rounded-xl font-semibold shadow-md transition flex items-center justify-center space-x-2">
+          <i data-lucide="cpu" class="w-5 h-5"></i>
+          <span>Run Screening Analysis</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ============================== EMERGENCY ============================== -->
+<section id="view-emergency" class="view-section hidden max-w-3xl mx-auto px-4 py-16">
+  <div class="bg-red-50 dark:bg-red-950/40 border-2 border-red-500 rounded-2xl p-8 shadow-xl text-center">
+    <div class="w-16 h-16 bg-red-100 dark:bg-red-900/60 text-red-600 dark:text-red-300 rounded-full flex items-center justify-center mx-auto mb-6">
+      <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+    </div>
+    <h2 class="font-display text-2xl font-bold text-red-900 dark:text-red-200 mb-3">Emergency Warning Triggered</h2>
+    <p id="emergency-message" class="text-red-700 dark:text-red-300 text-base mb-6 leading-relaxed">
+      Your responses include symptoms that may indicate a medical emergency. Do not wait for an online screening result. Contact local emergency services or seek emergency medical care immediately.
+    </p>
+    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-red-200 dark:border-red-900/60 text-left mb-8 max-w-lg mx-auto">
+      <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">Emergency Contact Information</h3>
+      <ul id="emergency-contacts-list" class="space-y-3 text-sm">
+        <li class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+          <span class="font-medium text-slate-800 dark:text-slate-200">National Emergency Service (Bangladesh)</span>
+          <a href="tel:999" class="font-bold text-red-600 dark:text-red-400 hover:underline">999</a>
+        </li>
+        <li class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+          <span class="font-medium text-slate-800 dark:text-slate-200">National Health Helpline</span>
+          <a href="tel:16263" class="font-bold text-red-600 dark:text-red-400 hover:underline">16263</a>
+        </li>
+        <li class="flex items-center justify-between">
+          <span class="font-medium text-slate-800 dark:text-slate-200">Local Emergency Number</span>
+          <a href="tel:112" class="font-bold text-red-600 dark:text-red-400 hover:underline">112</a>
+        </li>
+      </ul>
+    </div>
+    <p class="text-sm text-red-800 dark:text-red-200 font-semibold mb-4">This warning does not replace medical care. Do not delay emergency help to use this website.</p>
+    <div class="flex flex-col sm:flex-row justify-center gap-3">
+      <button onclick="continueEmergencyEvaluation()" class="bg-red-700 hover:bg-red-800 text-white font-semibold px-5 py-3 rounded-xl">I understand — continue to educational evaluation</button>
+      <button onclick="cancelEmergencyEvaluation()" class="border border-red-300 dark:border-red-800 px-5 py-3 rounded-xl font-semibold text-red-800 dark:text-red-200">No, cancel evaluation</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== RESULTS ============================== -->
+<section id="view-results" class="view-section hidden max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div id="critical-result-warning" class="hidden mb-6 rounded-2xl border-2 border-red-500 bg-red-50 dark:bg-red-950/40 p-5 text-red-900 dark:text-red-100" role="alert"><div class="flex gap-3"><i data-lucide="alert-triangle" class="w-6 h-6 shrink-0"></i><div><h3 class="font-bold">Critical warning — seek urgent medical care</h3><p class="text-sm mt-1">You chose to continue after a possible emergency warning. This educational evaluation cannot rule out an emergency and must not delay medical care. For severe chest pain, severe breathing difficulty, fainting, or stroke signs, contact emergency services now.</p></div></div></div>
+  <div class="space-y-8">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="flex items-center space-x-2 text-teal-600 dark:text-teal-400 text-xs font-semibold uppercase tracking-wider mb-2">
+          <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+          <span>Screening Complete · Educational Only</span>
+        </div>
+        <h2 class="font-display text-2xl font-bold text-navy-900 dark:text-white">Health Screening Report</h2>
+        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1" id="results-meta">Generated from your provided symptoms and optional labs.</p>
+      </div>
+      <div class="flex items-center gap-3 no-print">
+        <button onclick="window.print()" class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2.5 rounded-xl text-sm font-medium transition flex items-center space-x-2">
+          <i data-lucide="printer" class="w-4 h-4"></i><span>Print</span>
+        </button>
+        <button onclick="switchView('screening')" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition flex items-center space-x-2">
+          <i data-lucide="edit-3" class="w-4 h-4"></i><span>Edit Inputs</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="specialist-banner" class="bg-gradient-to-r from-navy-900 to-teal-900 text-white p-6 rounded-2xl shadow-md">
+      <div class="flex items-start space-x-4">
+        <div class="w-12 h-12 bg-teal-500/30 border border-teal-400/30 rounded-xl flex items-center justify-center text-teal-300 flex-shrink-0">
+          <i data-lucide="user-check" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <span class="text-xs font-semibold text-teal-300 uppercase tracking-wider">Suggested Specialist Consultation</span>
+          <h3 id="top-specialist-title" class="font-display text-lg font-bold text-white">General Physician</h3>
+          <p class="text-xs text-slate-300 mt-1">Based on highest-ranked condition match. Consult a qualified professional for formal evaluation.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="font-display text-lg font-bold text-navy-900 dark:text-white mb-4">Potentially Relevant Health Conditions</h3>
+      <div id="results-cards-container" class="space-y-4"></div>
+    </div>
+
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h3 class="font-display text-lg font-bold text-navy-900 dark:text-white">Related Research</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Opens directly on NCBI PubMed for peer-reviewed literature.</p>
+        </div>
+        <i data-lucide="book-open" class="w-5 h-5 text-teal-600 dark:text-teal-400"></i>
+      </div>
+      <div id="research-cards-container" class="grid md:grid-cols-2 gap-4"></div>
+    </div>
+
+    <div class="bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-xs text-slate-600 dark:text-slate-400 text-center">
+      <span class="font-semibold">Medical Disclaimer:</span> This educational screening tool does not provide a medical diagnosis. Always consult a qualified healthcare professional before making health decisions.
+    </div>
+  </div>
+</section>
+
+<!-- ============================== RECORDS ============================== -->
+<section id="view-records" class="view-section hidden max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 sm:p-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 border-b border-slate-200 dark:border-slate-800 pb-6">
+      <div>
+        <div class="text-xs font-semibold uppercase tracking-widest text-teal-600 dark:text-teal-400 mb-1.5">History</div>
+        <h2 class="font-display text-2xl font-bold text-navy-900 dark:text-white">Your Saved Records</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Signed-in patients can sync their screening history to their private Firebase account. Sign in to access records across devices.</p>
+      </div>
+      <div class="flex items-center gap-2 no-print">
+        <button onclick="exportRecords()" class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i><span>Export</span>
+        </button>
+        <button onclick="clearAllRecords()" class="bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-950/60 text-red-700 dark:text-red-400 px-3 py-2 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i><span>Clear all</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3 mb-6 no-print">
+      <div class="relative flex-1">
+        <input type="text" id="record-search" placeholder="Search by condition or symptom…" oninput="renderRecords()"
+               class="w-full px-4 py-2 pl-10 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm">
+        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+      </div>
+    </div>
+
+    <div id="records-list" class="space-y-3"></div>
+  </div>
+</section>
+
+
+<!-- ============================== PATIENT PROFILE ============================== -->
+<section id="view-profile" class="view-section hidden max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="grid lg:grid-cols-[0.8fr_1.2fr] gap-6">
+    <div class="bg-gradient-to-br from-[#04101c] via-teal-950 to-emerald-950 text-white rounded-3xl p-7 sm:p-8 shadow-xl">
+      <div class="w-14 h-14 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center mb-5"><i data-lucide="user-round" class="w-7 h-7"></i></div>
+      <p class="text-xs uppercase tracking-[.2em] text-teal-200 font-bold mb-2">Patient account</p>
+      <h2 class="font-display text-3xl font-bold mb-3">Your health profile</h2>
+      <p class="text-sm text-slate-200 leading-relaxed">Keep useful health details and your screening history together. Only access your own profile and records; never enter information you do not want stored.</p>
+      <div id="profileAuthNotice" class="mt-6 p-4 rounded-xl bg-white/10 border border-white/15 text-sm">Sign in to save your profile securely to your account.</div>
+      <div class="mt-6 text-xs text-teal-100/80 leading-relaxed">Health information is sensitive. Use a trusted device, sign out on shared computers, and seek a qualified clinician for medical advice.</div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 sm:p-8">
+      <div class="flex items-start justify-between gap-4 mb-6"><div><p class="text-xs uppercase tracking-widest text-teal-600 dark:text-teal-400 font-bold mb-1">Personal details</p><h3 class="font-display text-xl font-bold text-slate-900 dark:text-white">Patient information</h3></div><span id="profileSyncBadge" class="text-xs rounded-full px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Not signed in</span></div>
+      <form id="patientProfileForm" onsubmit="savePatientProfile(event)" class="grid sm:grid-cols-2 gap-4">
+        <div class="sm:col-span-2"><label class="block text-xs font-semibold mb-1.5" for="profileFullName">Full name *</label><input id="profileFullName" required maxlength="100" autocomplete="name" class="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-sm" placeholder="Your full name"></div>
+        <div><label class="block text-xs font-semibold mb-1.5" for="profilePhone">Mobile number</label><input id="profilePhone" type="tel" maxlength="30" autocomplete="tel" class="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-sm" placeholder="e.g. +8801XXXXXXXXX"></div>
+        <div><label class="block text-xs font-semibold mb-1.5" for="profileEmail">Email address</label><input id="profileEmail" type="email" maxlength="160" autocomplete="email" class="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm" readonly placeholder="Uses your sign-in email"></div>
+        <div><label class="block text-xs font-semibold mb-1.5" for="profileDob">Date of birth</label><input id="profileDob" type="date" class="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-sm"></div>
+        <div><label class="block text-xs font-semibold mb-1.5" for="profileGender">Gender (optional)</label><select id="profileGender" class="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-sm"><option value="">Prefer not to say</option><option>Female</option><option>Male</option><option>Non-binary</option><option>Self-describe</option></select></div>
+        <div><label class="block text-xs font-semibold mb-1.5" for="profileBlood">Blood group (optional)</label><select id="profileBlood" class="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-sm"><option value="">Not provided</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+        <div><label class="block text-xs font-semibold mb-1.5" for="profileEmergency">Emergency contact (optional)</label><input id="profileEmergency" maxlength="100" class="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-sm" placeholder="Name and phone"></div>
+        <div class="sm:col-span-2"><label class="block text-xs font-semibold mb-1.5" for="profileConditions">Existing medical conditions</label><textarea id="profileConditions" rows="2" maxlength="1500" class="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-sm" placeholder="Optional — e.g. asthma, diabetes"></textarea></div>
+        <div class="sm:col-span-2"><label class="block text-xs font-semibold mb-1.5" for="profileAllergies">Allergies</label><textarea id="profileAllergies" rows="2" maxlength="1500" class="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-sm" placeholder="Optional — medicines, foods, or other allergies"></textarea></div>
+        <div class="sm:col-span-2"><label class="block text-xs font-semibold mb-1.5" for="profileMedications">Current medications</label><textarea id="profileMedications" rows="2" maxlength="1500" class="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-sm" placeholder="Optional — include dose only if you wish"></textarea></div>
+        <div class="sm:col-span-2 flex flex-wrap gap-3 pt-2"><button id="profileSaveBtn" type="submit" class="bg-teal-600 hover:bg-teal-700 text-white px-5 py-3 rounded-xl text-sm font-semibold flex items-center gap-2"><i data-lucide="save" class="w-4 h-4"></i>Save profile</button><button type="button" onclick="switchView('records')" class="px-5 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-semibold">View screening history</button></div>
+        <p id="profileStatus" class="sm:col-span-2 hidden text-sm rounded-xl p-3" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== METHODOLOGY ============================== -->
+<section id="view-methodology" class="view-section hidden max-w-4xl mx-auto px-4 py-12">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm space-y-6">
+    <div>
+      <div class="text-xs font-semibold uppercase tracking-widest text-teal-600 dark:text-teal-400 mb-1.5">Transparency</div>
+      <h2 class="font-display text-2xl font-bold text-navy-900 dark:text-white">Methodology &amp; Transparency Hub</h2>
+    </div>
+    <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+      DiagNova is designed as an educational screening-support platform. This page details how information is processed without claiming unverified clinical outcomes.
+    </p>
+    <div class="space-y-5 text-sm text-slate-700 dark:text-slate-300">
+      <div>
+        <h3 class="font-semibold text-navy-900 dark:text-white text-base mb-1">1. Symptom &amp; Lab Rule Processing</h3>
+        <p>Inputs are evaluated against a structured multi-condition rule architecture. Missing laboratory values are explicitly handled and are never imputed as zero or "normal".</p>
+      </div>
+      <div>
+        <h3 class="font-semibold text-navy-900 dark:text-white text-base mb-1">2. Emergency Pre-Screen Layer</h3>
+        <p>Before any condition scoring takes place, a deterministic rule-based safety layer checks for red-flag warning terms. When triggered, routine scoring is halted immediately in favor of emergency guidance.</p>
+      </div>
+      <div>
+        <h3 class="font-semibold text-navy-900 dark:text-white text-base mb-1">3. Confidence &amp; Match Levels</h3>
+        <p>Condition confidence is calculated from matched key symptoms, supporting symptoms, and laboratory criteria with weighted scores. Match levels (Strong / Moderate / Possible) help contextualize results — they are not probabilities or diagnoses.</p>
+      </div>
+      <div>
+        <h3 class="font-semibold text-navy-900 dark:text-white text-base mb-1">4. PubMed Research Integration</h3>
+        <p>Links open directly on NCBI PubMed via search queries for each condition. Relevance does not imply diagnostic confirmation.</p>
+      </div>
+      <div>
+        <h3 class="font-semibold text-navy-900 dark:text-white text-base mb-1">5. What This Tool Is Not</h3>
+        <p>This is not a medical device and has not been clinically validated. It does not replace a physical exam, laboratory confirmation, imaging, or professional clinical judgment.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== PRIVACY ============================== -->
+<section id="view-privacy" class="view-section hidden max-w-4xl mx-auto px-4 py-12">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm space-y-6">
+    <div>
+      <div class="text-xs font-semibold uppercase tracking-widest text-teal-600 dark:text-teal-400 mb-1.5">Trust</div>
+      <h2 class="font-display text-2xl font-bold text-navy-900 dark:text-white">Privacy &amp; Security</h2>
+    </div>
+    <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+      Privacy is a core product requirement for DiagNova's Prediction.
+    </p>
+    <ul class="list-disc pl-5 space-y-2 text-sm text-slate-700 dark:text-slate-300">
+      <li><strong class="text-navy-900 dark:text-white">Optional account:</strong> Firebase can manage email/password sign-in. Screening can still be used without an account.</li>
+      <li><strong class="text-navy-900 dark:text-white">Local-only storage:</strong> Screening results are stored in your browser's <code class="text-xs bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">localStorage</code> — nothing is sent to a server.</li>
+      <li><strong class="text-navy-900 dark:text-white">No third-party tracking:</strong> Health inputs are never shared with analytics or advertising networks.</li>
+      <li><strong class="text-navy-900 dark:text-white">Full user control:</strong> Delete any record or clear all history from the Records page at any time.</li>
+      <li><strong class="text-navy-900 dark:text-white">External links:</strong> PubMed links open in a new tab on <code class="text-xs bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">pubmed.ncbi.nlm.nih.gov</code>.</li>
+    </ul>
+    <p class="text-xs text-slate-500 dark:text-slate-400">Use this tool on a trusted personal device. If you clear your browser data, saved records will be removed.</p>
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="no-print bg-[#04101c] text-slate-400 border-t border-white/5">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid md:grid-cols-4 gap-8 mb-10">
+      <div class="md:col-span-2">
+        <div class="flex items-center gap-2.5 mb-3">
+          <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-teal-600 to-emerald-500 flex items-center justify-center text-white">
+            <i data-lucide="activity" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <div class="text-white font-bold font-display text-base">DiagNova's Prediction</div>
+            <div class="text-[10px] uppercase tracking-widest text-teal-400">Screening support</div>
+          </div>
+        </div>
+        <p class="text-xs leading-relaxed max-w-sm">
+          An educational, evidence-informed screening assistant. Not a medical device, not a diagnostic service. Always consult a qualified clinician.
+        </p>
+      </div>
+      <div>
+        <div class="text-xs font-bold uppercase tracking-widest text-white mb-3">Product</div>
+        <ul class="space-y-2 text-xs">
+          <li><button onclick="switchView('screening')" class="hover:text-teal-400 transition">Screening</button></li>
+          <li><button onclick="switchView('records')" class="hover:text-teal-400 transition">Saved records</button></li>
+          <li><button onclick="switchView('methodology')" class="hover:text-teal-400 transition">Methodology</button></li>
+        </ul>
+      </div>
+      <div>
+        <div class="text-xs font-bold uppercase tracking-widest text-white mb-3">Trust</div>
+        <ul class="space-y-2 text-xs">
+          <li><button onclick="switchView('privacy')" class="hover:text-teal-400 transition">Privacy &amp; safety</button></li>
+          <li><a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank" rel="noopener" class="hover:text-teal-400 transition">PubMed</a></li>
+          <li><button onclick="switchView('landing')" class="hover:text-teal-400 transition">Home</button></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+      <div>© 2026 DiagNova. All rights reserved.</div>
+      <div class="flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+        <span>All screening runs locally in your browser</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<!-- AUTH MODAL: Firebase email/password authentication (configure firebaseConfig below) -->
+<div id="authModal" class="hidden fixed inset-0 z-[400] auth-backdrop flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="authTitle" onclick="if(event.target===this)closeAuthModal()">
+  <div class="auth-panel w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden">
+    <div class="p-6 sm:p-8">
+      <div class="flex items-start justify-between gap-4 mb-6">
+        <div>
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-teal-600 to-emerald-500 text-white flex items-center justify-center mb-4"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
+          <h2 id="authTitle" class="font-display text-2xl font-bold text-slate-900 dark:text-white">Welcome back</h2>
+          <p id="authSubtitle" class="text-sm text-slate-500 dark:text-slate-400 mt-1">Sign in to manage your account.</p>
+        </div>
+        <button type="button" onclick="closeAuthModal()" aria-label="Close sign in" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="authTabs" class="grid grid-cols-2 gap-2 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 mb-5">
+        <button type="button" id="authTabSignIn" class="auth-tab rounded-lg border border-transparent py-2 text-sm font-semibold" aria-selected="true" onclick="setAuthMode('signin')">Sign in</button>
+        <button type="button" id="authTabSignUp" class="auth-tab rounded-lg border border-transparent py-2 text-sm font-semibold" aria-selected="false" onclick="setAuthMode('signup')">Create account</button>
+      </div>
+      <div id="authConfigWarning" class="hidden rounded-xl border border-amber-200 bg-amber-50 text-amber-900 p-3 text-xs leading-relaxed mb-4 dark:bg-amber-950/40 dark:border-amber-900 dark:text-amber-200">
+        Authentication setup is incomplete. Add your Firebase web app configuration in the <code>firebaseConfig</code> object near the bottom of this HTML, then enable Email/Password in Firebase Authentication.
+      </div>
+      <form id="authForm" onsubmit="submitAuth(event)" class="space-y-4">
+        <div id="authNameWrap" class="hidden">
+          <label for="authName" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Full name</label>
+          <input id="authName" type="text" maxlength="80" autocomplete="name" placeholder="Your name" class="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-sm">
+        </div>
+        <div>
+          <label for="authEmail" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Email address</label>
+          <input id="authEmail" type="email" required autocomplete="email" placeholder="you@example.com" class="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-sm">
+        </div>
+        <div id="authPasswordWrap">
+          <label for="authPassword" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Password</label>
+          <input id="authPassword" type="password" minlength="8" required autocomplete="current-password" placeholder="At least 8 characters" class="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-sm">
+          <div id="authPasswordHint" class="text-[11px] text-slate-500 mt-1.5">Use at least 8 characters.</div>
+        </div>
+        <div id="authConfirmWrap" class="hidden">
+          <label for="authConfirm" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Confirm password</label>
+          <input id="authConfirm" type="password" minlength="8" autocomplete="new-password" placeholder="Repeat your password" class="w-full px-4 py-3 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-sm">
+        </div>
+        <button id="authSubmitBtn" type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white px-5 py-3 rounded-xl font-semibold shadow-lg shadow-teal-600/20 transition flex items-center justify-center gap-2"><i data-lucide="log-in" class="w-4 h-4"></i><span>Sign in</span></button>
+      </form>
+      <div id="authForgotWrap" class="text-center mt-4"><button type="button" onclick="sendPasswordReset()" class="text-sm font-semibold text-teal-700 dark:text-teal-400 hover:underline">Forgot password?</button></div>
+      <div class="flex items-start gap-2 mt-6 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400"><i data-lucide="lock-keyhole" class="w-4 h-4 flex-shrink-0 mt-0.5"></i><p>When Firebase is configured, profile details and screening records can sync to your private account. Configure Firestore security rules before storing real patient information.</p></div>
+      <p id="authStatus" role="status" aria-live="polite" class="hidden text-sm rounded-xl p-3 mt-4"></p>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div id="toasts" class="fixed top-20 right-4 z-[200] flex flex-col gap-2 max-w-[calc(100vw-2rem)] sm:max-w-sm"></div>
+
+<!-- RECORD DETAIL MODAL -->
+<div id="detail-modal" class="hidden fixed inset-0 z-[300] modal-overlay bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target===this)closeDetailModal()">
+  <div class="modal-box bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl w-full max-w-2xl max-h-[86vh] overflow-auto scroll-thin">
+    <div class="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-4 flex items-start justify-between gap-4">
+      <div>
+        <h3 id="detail-title" class="font-display text-lg font-bold text-navy-900 dark:text-white">Record</h3>
+        <p id="detail-sub" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5"></p>
+      </div>
+      <button onclick="closeDetailModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+    <div id="detail-body" class="p-6"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtDate = s => { try { return new Date(s).toLocaleString(undefined,{dateStyle:'medium',timeStyle:'short'}); } catch { return String(s||''); } };
+function refreshIcons(){ if(window.lucide) lucide.createIcons(); }
+
+/* ============================================================
+   TOASTS
+   ============================================================ */
+const TOAST_ICON = { success:'check', error:'x', warn:'alert-triangle', info:'info' };
+function toast(msg, type='info', ms=4500){
+  const el = document.createElement('div');
+  el.className = 'toast flex items-start gap-2.5 p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg text-sm';
+  const colors = {
+    success:'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
+    error:'bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300',
+    warn:'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300',
+    info:'bg-teal-100 text-teal-700 dark:bg-teal-950/60 dark:text-teal-300'
+  };
+  el.innerHTML =
+    '<span class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ' + (colors[type]||colors.info) + '">' +
+      '<i data-lucide="' + (TOAST_ICON[type]||'info') + '" class="w-3 h-3"></i>' +
+    '</span>' +
+    '<span class="flex-1 text-slate-700 dark:text-slate-200 leading-snug break-words">' + esc(msg) + '</span>' +
+    '<button class="w-5 h-5 flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex-shrink-0" aria-label="Dismiss">' +
+      '<i data-lucide="x" class="w-3.5 h-3.5"></i>' +
+    '</button>';
+  const kill = () => { el.classList.add('out'); setTimeout(()=>el.remove(), 220); };
+  el.querySelector('button').addEventListener('click', kill);
+  $('toasts').appendChild(el);
+  refreshIcons();
+  setTimeout(kill, ms);
+}
+
+/* ============================================================
+   THEME
+   ============================================================ */
+function applyTheme(mode){
+  document.documentElement.classList.toggle('dark', mode === 'dark');
+  localStorage.setItem('diagnova_theme', mode);
+  const btn = $('themeBtn');
+  if(btn){ btn.innerHTML = '<i data-lucide="' + (mode==='dark'?'sun':'moon') + '" class="w-4 h-4"></i>'; refreshIcons(); }
+}
+function toggleTheme(){
+  const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+  applyTheme(next);
+}
+(function initTheme(){
+  const saved = localStorage.getItem('diagnova_theme');
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(saved || (prefersDark ? 'dark' : 'light'));
+})();
+
+/* ============================================================
+   SYMPTOM VOCABULARY
+   ============================================================ */
+const SYMPTOMS = [
+  { id:'fatigue', name:'Fatigue / Excessive Tiredness' },
+  { id:'fever', name:'Fever / Elevated Body Temperature' },
+  { id:'headache', name:'Headache' },
+  { id:'dizziness', name:'Dizziness / Lightheadedness' },
+  { id:'increased_thirst', name:'Increased Thirst (Polydipsia)' },
+  { id:'frequent_urination', name:'Frequent Urination (Polyuria)' },
+  { id:'unintentional_weight_change', name:'Unintentional Weight Change' },
+  { id:'shortness_of_breath', name:'Shortness of Breath' },
+  { id:'chest_discomfort', name:'Chest Discomfort / Chest Pain' },
+  { id:'severe_chest_pain', name:'Severe Chest Pain' },
+  { id:'abdominal_pain', name:'Abdominal Pain' },
+  { id:'nausea', name:'Nausea or Vomiting' },
+  { id:'joint_pain', name:'Joint Pain (Arthralgia)' },
+  { id:'blurred_vision', name:'Blurred Vision' },
+  { id:'persistent_cough', name:'Persistent Cough' },
+];
+const SYMPTOM_MAP = Object.fromEntries(SYMPTOMS.map(s => [s.id, s]));
+
+/* ============================================================
+   CONDITIONS
+   ============================================================ */
+const CONDITIONS = [
+  {
+    id:'t2dm', name:'Type 2 Diabetes Mellitus', category:'Endocrine & Metabolic', specialist:'Endocrinologist',
+    keySymptoms:['increased_thirst','frequent_urination'],
+    supportSymptoms:['fatigue','blurred_vision','unintentional_weight_change','dizziness'],
+    labs:[
+      { key:'fasting_glucose', min:126, weight:4, label:'Fasting glucose ≥126 mg/dL suggests diabetes range' },
+      { key:'fasting_glucose', min:100, max:125, weight:2, label:'Fasting glucose 100–125 mg/dL suggests prediabetes range' }
+    ],
+    explanation:'The combination of thirst, frequent urination and elevated fasting glucose may suggest dysregulated blood sugar control. Formal testing is required.',
+    limitations:['Requires confirmatory HbA1c or OGTT','A single fasting glucose reading is not diagnostic'],
+    pubmedQuery:'type 2 diabetes mellitus screening diagnosis'
+  },
+  {
+    id:'htn', name:'Hypertension (High Blood Pressure)', category:'Cardiovascular', specialist:'Cardiologist / Internal Medicine',
+    keySymptoms:['headache','dizziness'],
+    supportSymptoms:['chest_discomfort','blurred_vision','fatigue'],
+    labs:[
+      { key:'systolic_bp', min:140, weight:4, label:'Systolic BP ≥140 mmHg (stage 2 hypertension range)' },
+      { key:'systolic_bp', min:130, max:139, weight:2, label:'Systolic BP 130–139 mmHg (stage 1 range)' },
+      { key:'diastolic_bp', min:90, weight:4, label:'Diastolic BP ≥90 mmHg' }
+    ],
+    explanation:'Elevated blood pressure readings combined with headache or dizziness may suggest hypertension. Multiple readings on separate occasions are required for diagnosis.',
+    limitations:['Single BP reading insufficient','White-coat hypertension must be excluded'],
+    pubmedQuery:'hypertension diagnosis blood pressure guidelines'
+  },
+  {
+    id:'ida', name:'Iron Deficiency Anemia', category:'Hematologic', specialist:'Hematologist / General Physician',
+    keySymptoms:['fatigue','dizziness','shortness_of_breath'],
+    supportSymptoms:['headache','blurred_vision','unintentional_weight_change'],
+    labs:[
+      { key:'hemoglobin', max:11.9, min:10, weight:3, label:'Hemoglobin 10–11.9 g/dL (mild anemia range)' },
+      { key:'hemoglobin', max:9.9, weight:4, label:'Hemoglobin <10 g/dL (moderate anemia range)' }
+    ],
+    explanation:'Low hemoglobin combined with fatigue and shortness of breath may suggest anemia. Iron studies (ferritin, TIBC) are needed to confirm iron deficiency.',
+    limitations:['Hemoglobin alone cannot distinguish anemia types','Requires ferritin and peripheral smear'],
+    pubmedQuery:'iron deficiency anemia diagnosis ferritin'
+  },
+  {
+    id:'cad', name:'Cardiovascular Disease / Dyslipidemia', category:'Cardiovascular', specialist:'Cardiologist',
+    keySymptoms:['chest_discomfort','shortness_of_breath'],
+    supportSymptoms:['fatigue','dizziness','joint_pain'],
+    labs:[
+      { key:'ldl', min:160, weight:4, label:'LDL ≥160 mg/dL (high)' },
+      { key:'ldl', min:130, max:159, weight:2, label:'LDL 130–159 mg/dL (borderline high)' }
+    ],
+    explanation:'Chest discomfort, shortness of breath, and elevated LDL may be relevant to cardiovascular risk. Formal cardiac evaluation is recommended for persistent symptoms.',
+    limitations:['Cannot rule in/out acute coronary syndrome','Requires ECG, troponin and formal risk scoring'],
+    pubmedQuery:'cardiovascular risk LDL cholesterol chest pain'
+  },
+  {
+    id:'hypothyroid', name:'Hypothyroidism', category:'Endocrine & Metabolic', specialist:'Endocrinologist',
+    keySymptoms:['fatigue','unintentional_weight_change'],
+    supportSymptoms:['joint_pain','dizziness','headache'],
+    labs:[],
+    explanation:'Fatigue and weight change can have many causes including thyroid dysfunction. TSH and free T4 testing are required to evaluate this possibility.',
+    limitations:['Requires TSH/free T4','Symptoms overlap with many other conditions'],
+    pubmedQuery:'hypothyroidism symptoms diagnosis TSH'
+  },
+  {
+    id:'migraine', name:'Migraine / Tension-Type Headache', category:'Neurologic', specialist:'Neurologist',
+    keySymptoms:['headache'],
+    supportSymptoms:['nausea','blurred_vision','dizziness'],
+    labs:[],
+    explanation:'Recurrent headaches with nausea or visual changes may be consistent with migraine. Red-flag features (sudden onset, focal deficits) require urgent evaluation.',
+    limitations:['Cannot exclude secondary headache causes','Requires clinical history and neurological exam'],
+    pubmedQuery:'migraine diagnosis criteria headache'
+  },
+  {
+    id:'uri', name:'Respiratory Infection (e.g. URI)', category:'Respiratory', specialist:'General Physician / Pulmonologist',
+    keySymptoms:['fever','persistent_cough'],
+    supportSymptoms:['fatigue','shortness_of_breath','headache'],
+    labs:[],
+    explanation:'Fever with cough may reflect a respiratory infection. Most are self-limited; persistent symptoms or breathlessness require in-person evaluation.',
+    limitations:['Cannot distinguish viral vs bacterial','Requires clinical exam, possible imaging'],
+    pubmedQuery:'respiratory tract infection diagnosis cough fever'
+  },
+  {
+    id:'gerd', name:'Gastroesophageal Reflux / Dyspepsia', category:'Gastrointestinal', specialist:'Gastroenterologist',
+    keySymptoms:['abdominal_pain','nausea'],
+    supportSymptoms:['chest_discomfort','persistent_cough'],
+    labs:[],
+    explanation:'Upper abdominal discomfort with nausea may relate to reflux or dyspepsia. Persistent or alarm symptoms warrant gastroenterology review.',
+    limitations:['Overlaps with cardiac causes of chest pain','Requires clinical assessment'],
+    pubmedQuery:'GERD dyspepsia diagnosis management'
+  },
+  {
+    id:'anxiety', name:'Anxiety / Stress-Related Symptoms', category:'Mental Health', specialist:'Psychiatrist / Clinical Psychologist',
+    keySymptoms:['fatigue','dizziness'],
+    supportSymptoms:['chest_discomfort','shortness_of_breath','headache','nausea'],
+    labs:[],
+    explanation:'Overlapping physical symptoms without clear laboratory explanation may relate to anxiety. A thorough medical and psychological assessment is recommended.',
+    limitations:['Diagnosis of exclusion','Requires clinical interview'],
+    pubmedQuery:'anxiety disorder physical symptoms assessment'
+  }
+];
+
+/* ============================================================
+   RED FLAGS
+   ============================================================ */
+function detectRedFlags(symptoms){
+  const flags = [];
+  const set = new Set(symptoms);
+  if(set.has('severe_chest_pain')){
+    flags.push('Severe chest pain can indicate a heart attack or other life-threatening event. Call emergency services now.');
+  }
+  if(set.has('shortness_of_breath') && set.has('chest_discomfort')){
+    flags.push('Chest discomfort with shortness of breath requires urgent evaluation.');
+  }
+  return flags;
+}
+
+/* ============================================================
+   SCREENING ENGINE
+   ============================================================ */
+function getMatchLevel(conf){
+  if(conf >= 70) return { label:'Strong match', cls:'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-900' };
+  if(conf >= 45) return { label:'Moderate match', cls:'bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/60 dark:text-teal-300 dark:border-teal-900' };
+  return { label:'Possible match', cls:'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700' };
+}
+
+function runScreening(input){
+  const { symptoms, labs } = input;
+  const results = [];
+
+  for(const cond of CONDITIONS){
+    let score = 0;
+    const evidence = [];
+    const matchedSymptoms = [];
+
+    for(const s of cond.keySymptoms){
+      if(symptoms.includes(s)){
+        score += 3;
+        matchedSymptoms.push(s);
+        evidence.push('Key symptom present: ' + (SYMPTOM_MAP[s]?.name || s));
+      }
+    }
+    for(const s of cond.supportSymptoms){
+      if(symptoms.includes(s)){
+        score += 1;
+        matchedSymptoms.push(s);
+        evidence.push('Supporting symptom: ' + (SYMPTOM_MAP[s]?.name || s));
+      }
+    }
+    for(const lab of cond.labs){
+      const val = labs[lab.key];
+      if(val == null || Number.isNaN(val)) continue;
+      const ok = (lab.min == null || val >= lab.min) && (lab.max == null || val <= lab.max);
+      if(ok){
+        score += lab.weight;
+        evidence.push(lab.label + ' (' + val + ')');
+      }
+    }
+
+    if(score === 0) continue;
+
+    const maxScore = cond.keySymptoms.length * 3
+                   + cond.supportSymptoms.length
+                   + cond.labs.reduce((a,l) => a + l.weight, 0);
+    const confidence = Math.min(100, Math.round((score / maxScore) * 100));
+
+    if(confidence < 12) continue;
+
+    results.push({
+      id: cond.id, name: cond.name, category: cond.category, specialist: cond.specialist,
+      explanation: cond.explanation, limitations: cond.limitations, pubmedQuery: cond.pubmedQuery,
+      confidence, evidence, matchedSymptoms, matchLevel: getMatchLevel(confidence)
+    });
+  }
+
+  results.sort((a,b) => b.confidence - a.confidence);
+  return results.slice(0, 5);
+}
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const STORAGE_KEYS = { records:'diagnova_records_v1' };
+const AppState = {
+  selectedSymptoms: new Set(),
+  lastInput: null,
+  lastResults: null,
+  pendingEmergencyInput: null,
+  pendingEmergencyFlags: [],
+  records: [],
+};
+
+function loadRecords(){
+  try { AppState.records = JSON.parse(localStorage.getItem(STORAGE_KEYS.records) || '[]') || []; }
+  catch { AppState.records = []; }
+}
+function saveRecords(){
+  if(currentFirebaseUser && firebaseDb){
+    // Authenticated health records are stored in the user's Firestore path, not shared browser storage.
+    syncRecordsToCloud().catch(err=>{ console.error('Cloud record sync failed:',err); toast('Record saved in this session, but cloud sync failed. Check Firestore rules.', 'warn', 5000); });
+    return;
+  }
+  try { localStorage.setItem(STORAGE_KEYS.records, JSON.stringify(AppState.records)); }
+  catch { toast('Could not save record (storage full?).', 'error'); }
+}
+
+/* ============================================================
+   CLINICAL SUPPORT DIRECTORY (demo listings; no live booking integration)
+   ============================================================ */
+const CLINICAL_DEMO_LISTINGS = [
+ {specialty:'General Medicine',title:'General physician',description:'Common symptoms, general health concerns, and care navigation.',types:['Online consultation','Clinic visit'],areas:['Dhaka','Chattogram','Remote / online'],icon:'stethoscope'},
+ {specialty:'Cardiology',title:'Heart health specialist',description:'Heart and circulation concerns; urgent symptoms require emergency care.',types:['Online consultation','Clinic visit'],areas:['Dhaka','Remote / online'],icon:'heart-pulse'},
+ {specialty:'Dermatology',title:'Skin health specialist',description:'Skin, hair, and nail concerns and follow-up questions.',types:['Online consultation','Clinic visit'],areas:['Dhaka','Chattogram','Remote / online'],icon:'scan-face'},
+ {specialty:'Gynecology',title:'Women’s health specialist',description:'Reproductive health concerns and routine women’s health care.',types:['Online consultation','Clinic visit'],areas:['Dhaka','Chattogram','Remote / online'],icon:'heart'},
+ {specialty:'Pediatrics',title:'Child health specialist',description:'Health concerns for infants, children, and adolescents.',types:['Online consultation','Clinic visit'],areas:['Dhaka','Chattogram','Remote / online'],icon:'baby'},
+ {specialty:'Neurology',title:'Nervous system specialist',description:'Neurological symptoms and follow-up care planning.',types:['Online consultation','Clinic visit'],areas:['Dhaka','Remote / online'],icon:'brain'},
+ {specialty:'Orthopedics',title:'Bone and joint specialist',description:'Bone, joint, muscle, and mobility concerns.',types:['Online consultation','Clinic visit'],areas:['Dhaka','Chattogram'],icon:'bone'},
+ {specialty:'Mental Health',title:'Mental health professional',description:'Emotional wellbeing, stress, and mental health support.',types:['Online consultation','Clinic visit'],areas:['Dhaka','Remote / online'],icon:'messages-square'},
+ {specialty:'Home care inquiry',title:'Home care coordination',description:'Ask about whether home-based clinical care may be available in your area.',types:['Home care inquiry'],areas:['Dhaka','Chattogram'],icon:'house-plus'}
+];
+function renderDoctorDirectory(){
+ const host=$('doctorDirectoryList'); if(!host)return;
+ const q=($('clinicalSearch')?.value||'').trim().toLowerCase(); const mode=$('clinicalModeFilter')?.value||'all'; const area=$('clinicalArea')?.value||'all';
+ const rows=CLINICAL_DEMO_LISTINGS.filter(d=>(!q||[d.specialty,d.title,d.description].join(' ').toLowerCase().includes(q))&&(mode==='all'||d.types.includes(mode))&&(area==='all'||d.areas.includes(area)));
+ host.innerHTML=rows.length?rows.map(d=>`<article class="rounded-2xl border border-slate-200 dark:border-slate-700 p-5 flex flex-col"><div class="flex items-start gap-3"><span class="w-11 h-11 rounded-xl bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300 flex items-center justify-center shrink-0"><i data-lucide="${d.icon}" class="w-5 h-5"></i></span><div><span class="text-[10px] uppercase tracking-wider font-bold text-amber-700 dark:text-amber-300">Demo category</span><h4 class="font-bold mt-1">${escapeClinicalText(d.title)}</h4><p class="text-xs text-teal-700 dark:text-teal-300 mt-1">${escapeClinicalText(d.specialty)}</p></div></div><p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mt-4 flex-grow">${escapeClinicalText(d.description)}</p><div class="flex flex-wrap gap-1.5 mt-4">${d.types.map(t=>`<span class="text-[10px] rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-1">${escapeClinicalText(t)}</span>`).join('')}</div><div class="text-xs text-slate-500 dark:text-slate-400 mt-3 flex gap-1.5"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i>${d.areas.map(escapeClinicalText).join(' · ')}</div><button onclick="openCareRequest('${d.specialty.replace(/'/g,"\\'")}')" class="mt-5 w-full rounded-xl border border-teal-600 text-teal-700 dark:text-teal-300 dark:border-teal-700 px-3 py-2.5 text-sm font-semibold hover:bg-teal-50 dark:hover:bg-teal-950/40">Prepare request <span aria-hidden="true">→</span></button></article>`).join(''):'<div class="md:col-span-2 xl:col-span-3 text-center p-8 text-sm text-slate-500">No matching care categories. Try a different search or filter.</div>';
+ refreshIcons();
+}
+function escapeClinicalText(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+function setClinicalMode(mode){switchView('clinical');if($('clinicalModeFilter'))$('clinicalModeFilter').value=mode;renderDoctorDirectory();}
+function openCareRequest(specialty=''){const modal=$('careRequestModal');if(!modal)return;modal.classList.remove('hidden');modal.classList.add('flex');if(specialty&&$('careSpecialty'))$('careSpecialty').value=specialty;$('careRequestStatus')?.classList.add('hidden');if(currentFirebaseUser&&$('carePatientName'))$('carePatientName').value=currentFirebaseUser.displayName||$('profileFullName')?.value||'';if(currentFirebaseUser&&$('carePatientPhone'))$('carePatientPhone').value=$('profilePhone')?.value||'';refreshIcons();}
+function closeCareRequest(){const modal=$('careRequestModal');if(modal){modal.classList.add('hidden');modal.classList.remove('flex');}}
+function submitCareRequest(event){event.preventDefault();const request={id:'care-'+Date.now(),name:$('carePatientName').value.trim(),phone:$('carePatientPhone').value.trim(),specialty:$('careSpecialty').value,type:$('careConsultType').value,date:$('carePreferredDate').value,area:$('careAreaInput').value.trim(),reason:$('careReason').value.trim(),createdAt:new Date().toISOString(),status:'Local demo request — not sent'};try{const existing=JSON.parse(localStorage.getItem('diagnova_care_requests')||'[]');existing.unshift(request);localStorage.setItem('diagnova_care_requests',JSON.stringify(existing.slice(0,20)));}catch(e){console.warn('Local request could not be stored',e);}const status=$('careRequestStatus');status.textContent='Demo request saved on this device only. It has NOT been sent to a doctor or clinic. For a real appointment, contact a verified provider directly.';status.className='text-sm rounded-xl p-3 bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-200';}
+function saveClinicalQuestions(){const el=$('clinicalQuestions');const status=$('clinicalQuestionStatus');try{localStorage.setItem('diagnova_clinical_questions',el.value);status.textContent='Questions saved in this browser only.';status.classList.remove('hidden');}catch(e){status.textContent='Could not save on this device.';status.classList.remove('hidden');}}
+function loadClinicalQuestions(){const el=$('clinicalQuestions');if(el)try{el.value=localStorage.getItem('diagnova_clinical_questions')||'';}catch(e){}}
+
+/* ============================================================
+   VIEW SWITCHING
+   ============================================================ */
+function switchView(name){
+  const siteNav = document.querySelector('header nav');
+  if(siteNav) siteNav.scrollTo({left:0,behavior:'auto'});
+  document.querySelectorAll('header nav button[onclick^="switchView("]').forEach(btn => {
+    const match = btn.getAttribute('onclick').match(/switchView\('([^']+)'\)/);
+    const active = !!match && match[1] === name;
+    if(active) btn.setAttribute('aria-current','page'); else btn.removeAttribute('aria-current');
+  });
+  $$('.view-section').forEach(el => el.classList.add('hidden'));
+  const target = $('view-' + name);
+  if(target){
+    target.classList.remove('hidden');
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+  if(name === 'records') renderRecords();
+  if(name === 'clinical'){renderDoctorDirectory();loadClinicalQuestions();}
+  refreshIcons();
+}
+
+/* ============================================================
+   SYMPTOM UI
+   ============================================================ */
+function renderSymptomChips(filter = ''){
+  const container = $('symptom-chips');
+  if(!container) return;
+  container.innerHTML = '';
+  const q = filter.trim().toLowerCase();
+  const list = SYMPTOMS.filter(s => !q || s.name.toLowerCase().includes(q));
+  if(!list.length){
+    container.innerHTML = '<p class="text-xs text-slate-400 italic px-1">No matching symptoms.</p>';
+    return;
+  }
+  list.forEach(s => {
+    const selected = AppState.selectedSymptoms.has(s.id);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'sym-chip px-3 py-1.5 rounded-lg text-xs font-medium border flex items-center gap-1.5 ' +
+      (selected
+        ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
+        : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-teal-400 dark:hover:border-teal-600');
+    btn.innerHTML = '<span>' + esc(s.name) + '</span>';
+    btn.onclick = () => toggleSymptom(s.id);
+    container.appendChild(btn);
+  });
+}
+
+function renderSelectedSymptoms(){
+  const container = $('selected-symptoms-container');
+  const msg = $('no-symptoms-msg');
+  const countLabel = $('symptom-count');
+  if(!container) return;
+  if(countLabel) countLabel.textContent = AppState.selectedSymptoms.size + ' selected';
+
+  Array.from(container.children).forEach(child => { if(child !== msg) child.remove(); });
+
+  if(AppState.selectedSymptoms.size === 0){
+    if(msg) msg.style.display = '';
+  } else {
+    if(msg) msg.style.display = 'none';
+    AppState.selectedSymptoms.forEach(id => {
+      const s = SYMPTOM_MAP[id];
+      if(!s) return;
+      const chip = document.createElement('div');
+      chip.className = 'inline-flex items-center gap-1.5 bg-teal-700 dark:bg-teal-600 text-white px-3 py-1 rounded-lg text-xs font-medium shadow-sm';
+      chip.innerHTML = '<span>' + esc(s.name) + '</span>' +
+        '<button type="button" class="hover:text-red-200 ml-0.5 leading-none" aria-label="Remove">×</button>';
+      chip.querySelector('button').onclick = () => toggleSymptom(id);
+      container.appendChild(chip);
+    });
+  }
+  renderSymptomChips($('symptom-search')?.value || '');
+}
+
+function toggleSymptom(id){
+  if(AppState.selectedSymptoms.has(id)) AppState.selectedSymptoms.delete(id);
+  else AppState.selectedSymptoms.add(id);
+  renderSelectedSymptoms();
+}
+function filterSymptoms(q){ renderSymptomChips(q); }
+
+/* ============================================================
+   GUIDED AI SYMPTOM ASSISTANT (local keyword helper, not diagnosis)
+   ============================================================ */
+let assistantDetectedSymptoms = [];
+let assistantRecognition = null;
+function analyzeSymptomText(){
+  const field = $('ai-symptom-text');
+  const text = (field?.value || '').trim();
+  const panel = $('ai-assistant-results');
+  if(!text){ toast('Please describe your symptoms first, or use Speak symptoms.', 'warn'); field?.focus(); return; }
+  const t = text.toLowerCase();
+  const matchers = [
+    ['severe_chest_pain', /severe chest pain|crushing chest pain|intense chest pain|chest pain/],
+    ['chest_discomfort', /chest discomfort|chest tightness|chest pressure|chest ache|chest pain/],
+    ['shortness_of_breath', /shortness of breath|difficulty breathing|trouble breathing|breathless|can't breathe|cannot breathe/],
+    ['fever', /fever|high temperature|temperature/],
+    ['headache', /headache|head pain|migraine/],
+    ['dizziness', /dizz(y|iness)|lightheaded|vertigo/],
+    ['fatigue', /fatigue|tired|exhausted|low energy|weakness/],
+    ['increased_thirst', /increased thirst|very thirsty|excessive thirst/],
+    ['frequent_urination', /frequent urination|urinating frequently|pee often|passing urine often/],
+    ['unintentional_weight_change', /weight loss|losing weight|weight gain|gained weight|weight change/],
+    ['abdominal_pain', /abdominal pain|stomach ache|stomach pain|belly pain/],
+    ['nausea', /nausea|nauseous|vomit|vomiting|feeling sick/],
+    ['joint_pain', /joint pain|painful joints|arthritis pain/],
+    ['blurred_vision', /blurred vision|blurry vision|vision is blurry/],
+    ['persistent_cough', /persistent cough|coughing|cough/]
+  ];
+  assistantDetectedSymptoms = [...new Set(matchers.filter(([id,re])=>re.test(t)).map(([id])=>id))];
+  // Remove the severe label if the user only describes ordinary chest discomfort without severe wording.
+  if(!/severe chest pain|crushing chest pain|intense chest pain/.test(t)) assistantDetectedSymptoms=assistantDetectedSymptoms.filter(id=>id!=='severe_chest_pain');
+  const urgent = /severe chest pain|crushing chest pain|intense chest pain|can't breathe|cannot breathe|difficulty breathing|trouble breathing|face droop|one side (of (my )?)?(body|face).*(weak|numb)|sudden (confusion|vision loss|weakness)|uncontrolled bleeding|suicidal intent/.test(t);
+  const comboUrgent = assistantDetectedSymptoms.includes('chest_discomfort') && assistantDetectedSymptoms.includes('shortness_of_breath');
+  const specialties = [];
+  if(assistantDetectedSymptoms.some(x=>['chest_discomfort','severe_chest_pain','shortness_of_breath'].includes(x))) specialties.push('Cardiologist (for heart/chest concerns)');
+  if(assistantDetectedSymptoms.some(x=>['increased_thirst','frequent_urination','unintentional_weight_change'].includes(x))) specialties.push('Endocrinologist (for blood-sugar or hormone concerns)');
+  if(assistantDetectedSymptoms.includes('headache') || assistantDetectedSymptoms.includes('dizziness') || assistantDetectedSymptoms.includes('blurred_vision')) specialties.push('Neurologist or eye specialist, depending on symptoms');
+  if(assistantDetectedSymptoms.some(x=>['fever','persistent_cough'].includes(x))) specialties.push('General physician; pulmonologist if breathing/cough symptoms persist');
+  if(assistantDetectedSymptoms.some(x=>['abdominal_pain','nausea'].includes(x))) specialties.push('General physician or gastroenterologist');
+  if(assistantDetectedSymptoms.includes('joint_pain')) specialties.push('General physician or rheumatologist/orthopedist, depending on the cause');
+  if(assistantDetectedSymptoms.includes('fatigue')) specialties.push('General physician for initial assessment');
+  const uniqueSpecialties=[...new Set(specialties)];
+  const suggestion = urgent || comboUrgent
+    ? 'Your description includes a possible emergency warning sign. Do not rely on this online helper or wait for a screening result. Seek emergency medical care now.'
+    : assistantDetectedSymptoms.length
+      ? 'I recognized some symptom keywords, but they can have many different causes. Note when symptoms began, how severe they are, what makes them better or worse, and any medicines or relevant medical history. Arrange an in-person assessment if symptoms persist, worsen, or concern you. Do not start or stop medicines based on this tool.'
+      : 'I could not confidently match your description to the limited symptom list. Try describing the main symptom, when it started, and whether it is getting worse. If you are unsure where to start, contact a general physician for an assessment.';
+  panel.classList.remove('hidden');
+  $('ai-suggestion-text').textContent=suggestion;
+  $('ai-doctor-text').textContent=urgent || comboUrgent ? 'Emergency department / local emergency services now' : (uniqueSpecialties.length ? uniqueSpecialties.join('; ') : 'General physician / primary care clinician');
+  const alert=$('ai-urgent-alert');
+  if(urgent || comboUrgent){ alert.textContent='Urgent warning: potentially serious symptoms were mentioned. Please seek emergency care now.'; alert.classList.remove('hidden'); }
+  else { alert.classList.add('hidden'); alert.textContent=''; }
+  const wrap=$('ai-detected-wrap'), chips=$('ai-detected-symptoms');
+  chips.innerHTML='';
+  assistantDetectedSymptoms.forEach(id=>{const sym=SYMPTOM_MAP[id]; if(!sym)return; const chip=document.createElement('span'); chip.className='px-2.5 py-1 rounded-full bg-teal-100 text-teal-800 dark:bg-teal-900/70 dark:text-teal-100 text-xs font-medium'; chip.textContent=sym.name; chips.appendChild(chip);});
+  wrap.classList.toggle('hidden',assistantDetectedSymptoms.length===0);
+  refreshIcons();
+}
+function applyAssistantSymptoms(){
+  if(!assistantDetectedSymptoms.length){toast('No recognized symptoms to add.','info');return;}
+  assistantDetectedSymptoms.forEach(id=>AppState.selectedSymptoms.add(id));
+  renderSelectedSymptoms();
+  toast('Recognized symptoms added. Please review them before running screening.','success',3500);
+  $('selected-symptoms-container')?.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function handleScreeningFiles(input){
+  const list=$('ai-report-file-list'), status=$('ai-report-status');
+  if(!list||!status)return;
+  const files=Array.from(input.files||[]);
+  list.innerHTML='';
+  status.classList.remove('hidden');
+  if(files.length>5){
+    input.value='';
+    status.className='text-xs mt-2 text-red-600 dark:text-red-300';
+    status.textContent='Please choose no more than 5 files.';
+    list.classList.add('hidden');
+    return;
+  }
+  const tooLarge=files.find(file=>file.size>10*1024*1024);
+  if(tooLarge){
+    input.value='';
+    status.className='text-xs mt-2 text-red-600 dark:text-red-300';
+    status.textContent='Each file must be 10 MB or smaller. Please choose smaller files.';
+    list.classList.add('hidden');
+    return;
+  }
+  if(!files.length){
+    list.classList.add('hidden');
+    status.classList.add('hidden');
+    return;
+  }
+  files.forEach(file=>{
+    const row=document.createElement('div');
+    row.className='flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950/60 px-3 py-2 text-xs';
+    const icon=document.createElement('span');
+    icon.className='text-teal-600 dark:text-teal-400 shrink-0';
+    icon.innerHTML='<i data-lucide="file-text" class="w-4 h-4"></i>';
+    const name=document.createElement('span');
+    name.className='min-w-0 flex-1 truncate font-medium text-slate-700 dark:text-slate-200';
+    name.textContent=file.name;
+    const size=document.createElement('span');
+    size.className='shrink-0 text-slate-500 dark:text-slate-400';
+    size.textContent=file.size<1024*1024?(file.size/1024).toFixed(0)+' KB':(file.size/1024/1024).toFixed(1)+' MB';
+    row.append(icon,name,size); list.appendChild(row);
+  });
+  list.classList.remove('hidden');
+  status.className='text-xs mt-2 text-teal-700 dark:text-teal-300';
+  status.textContent='Files selected for this screening session. They remain in this browser and are not uploaded to a server or interpreted by the demo assistant.';
+  refreshIcons();
+}
+
+function clearSymptomAssistant(){
+  if($('ai-symptom-text')) $('ai-symptom-text').value='';
+  if($('ai-assistant-results')) $('ai-assistant-results').classList.add('hidden');
+  assistantDetectedSymptoms=[];
+  if(assistantRecognition){try{assistantRecognition.stop();}catch(e){} assistantRecognition=null;}
+  const btn=$('ai-voice-btn'); if(btn) btn.innerHTML='<i data-lucide="mic" class="w-4 h-4"></i><span>Speak symptoms</span>';
+  refreshIcons();
+}
+function startSymptomVoiceInput(){
+  const SpeechRecognition=window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SpeechRecognition){toast('Voice input is not supported in this browser. Try Chrome or Edge, or type your symptoms.','warn',5000);return;}
+  if(assistantRecognition){try{assistantRecognition.stop();}catch(e){} assistantRecognition=null;}
+  const recognition=new SpeechRecognition(); assistantRecognition=recognition;
+  recognition.lang='en-US'; recognition.interimResults=true; recognition.continuous=false;
+  const field=$('ai-symptom-text'), btn=$('ai-voice-btn');
+  const original='<i data-lucide="mic" class="w-4 h-4"></i><span>Speak symptoms</span>';
+  btn.innerHTML='<i data-lucide="mic" class="w-4 h-4 animate-pulse"></i><span>Listening…</span>'; refreshIcons();
+  let finalText='';
+  recognition.onresult=(event)=>{let interim='';for(let i=event.resultIndex;i<event.results.length;i++){const transcript=event.results[i][0].transcript;if(event.results[i].isFinal)finalText+=transcript+' ';else interim+=transcript;}field.value=(finalText+interim).trim();};
+  recognition.onerror=(event)=>{toast(event.error==='not-allowed'?'Microphone permission was denied. You can type your symptoms instead.':'Voice input could not start. Please type your symptoms instead.','warn',4500);};
+  recognition.onend=()=>{assistantRecognition=null;btn.innerHTML=original;refreshIcons();if(field.value.trim()) analyzeSymptomText();};
+  try{recognition.start();}catch(e){assistantRecognition=null;btn.innerHTML=original;refreshIcons();toast('Could not start voice input. Please type your symptoms.','warn');}
+}
+
+function resetForm(){
+  AppState.selectedSymptoms.clear();
+  const form = $('screening-form');
+  if(form) form.reset();
+  const fileList=$('ai-report-file-list'), fileStatus=$('ai-report-status');
+  if(fileList){fileList.innerHTML='';fileList.classList.add('hidden');}
+  if(fileStatus){fileStatus.textContent='';fileStatus.classList.add('hidden');}
+  renderSelectedSymptoms();
+  toast('Form cleared.', 'info', 2000);
+}
+
+/* ============================================================
+   SCREENING SUBMIT
+   ============================================================ */
+async function handleScreeningSubmit(e){
+  e.preventDefault();
+  if(AppState.selectedSymptoms.size === 0){
+    toast('Please select at least one symptom before running the screening.', 'warn');
+    return;
+  }
+
+  const getLab = id => {
+    const v = $(id).value.trim();
+    if(v === '') return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  };
+
+  const ageValue = getLab('input-age');
+  if(ageValue !== null && (!Number.isFinite(ageValue) || ageValue < 0 || ageValue > 120)){
+    toast('Age must be between 0 and 120 years.','warn'); return;
+  }
+  const labLimits = [
+    ['lab-glucose','Fasting glucose',0,2000],
+    ['lab-hemoglobin','Hemoglobin',0,100],
+    ['lab-ldl','LDL cholesterol',0,2000],
+    ['lab-sysbp','Systolic blood pressure',0,400],
+    ['lab-diabp','Diastolic blood pressure',0,300]
+  ];
+  for(const [id,label,min,max] of labLimits){
+    const value=getLab(id);
+    if(value!==null && (value<min || value>max)){
+      toast(label+' value is outside the accepted input range. Please check it.','warn'); return;
+    }
+  }
+  const input = {
+    age: ageValue,
+    sex: $('input-sex').value || null,
+    symptoms: Array.from(AppState.selectedSymptoms),
+    labs: {
+      fasting_glucose: getLab('lab-glucose'),
+      hemoglobin: getLab('lab-hemoglobin'),
+      ldl: getLab('lab-ldl'),
+      systolic_bp: getLab('lab-sysbp'),
+      diastolic_bp: getLab('lab-diabp'),
+    }
+  };
+
+  const btn = $('submit-btn');
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i><span>Analyzing…</span>';
+  refreshIcons();
+
+  try {
+    const flags = detectRedFlags(input.symptoms);
+    if(flags.length){
+      $('emergency-message').textContent = flags.join(' ');
+      AppState.lastInput = input;
+      AppState.pendingEmergencyInput = input;
+      AppState.pendingEmergencyFlags = flags;
+      switchView('emergency');
+      return;
+    }
+
+    const results = runScreening(input);
+    AppState.lastInput = input;
+    AppState.lastResults = results;
+
+    if(!results.length){
+      toast('No condition matched your inputs. Try adding more symptoms or lab values.', 'warn', 6000);
+      return;
+    }
+
+    $('critical-result-warning').classList.add('hidden');
+    populateResultsDashboard(results, input);
+
+    if($('save-record').checked){
+      const record = {
+        id: Date.now() + '-' + Math.random().toString(36).slice(2,8),
+        created_at: new Date().toISOString(),
+        input, results,
+      };
+      AppState.records.unshift(record);
+      saveRecords();
+      toast('Screening saved to your records.', 'success', 3000);
+    }
+
+    switchView('results');
+  } catch(err){
+    console.error(err);
+    toast('Something went wrong while screening.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = original;
+    refreshIcons();
+  }
+}
+
+/* ============================================================
+   RESULTS RENDERER
+   ============================================================ */
+function populateResultsDashboard(results, input){
+  const top = results[0];
+  $('top-specialist-title').textContent = top.specialist;
+
+  const meta = [];
+  if(input.age) meta.push('Age ' + input.age);
+  if(input.sex) meta.push(input.sex);
+  meta.push(input.symptoms.length + ' symptom' + (input.symptoms.length === 1 ? '' : 's'));
+  const labCount = Object.values(input.labs).filter(v => v != null).length;
+  if(labCount) meta.push(labCount + ' lab value' + (labCount === 1 ? '' : 's'));
+  $('results-meta').textContent = 'Generated ' + new Date().toLocaleString() + ' · ' + meta.join(' · ');
+
+  const container = $('results-cards-container');
+  container.innerHTML = '';
+  results.forEach(r => {
+    const card = document.createElement('div');
+    card.className = 'card-print bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm';
+    card.innerHTML =
+      '<div class="flex items-start justify-between gap-3 mb-3">' +
+        '<div class="min-w-0">' +
+          '<span class="text-xs font-semibold text-teal-600 dark:text-teal-400 uppercase tracking-wider">' + esc(r.category) + '</span>' +
+          '<h4 class="font-display text-lg font-bold text-navy-900 dark:text-white mt-0.5">' + esc(r.name) + '</h4>' +
+        '</div>' +
+        '<span class="px-3 py-1 rounded-full text-xs font-semibold border whitespace-nowrap ' + r.matchLevel.cls + '">' + esc(r.matchLevel.label) + '</span>' +
+      '</div>' +
+      '<div class="mb-4">' +
+        '<div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1.5">' +
+          '<span>Relative confidence (educational)</span>' +
+          '<span class="font-semibold text-navy-900 dark:text-white">' + r.confidence + '%</span>' +
+        '</div>' +
+        '<div class="bar"><i style="width:' + r.confidence + '%"></i></div>' +
+      '</div>' +
+      '<p class="text-sm text-slate-600 dark:text-slate-300 mb-4">' + esc(r.explanation) + '</p>' +
+      '<div class="grid sm:grid-cols-2 gap-4 text-xs">' +
+        '<div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl">' +
+          '<div class="font-semibold text-navy-900 dark:text-white mb-1.5">Evidence matched</div>' +
+          '<ul class="space-y-1 text-slate-700 dark:text-slate-300">' +
+            (r.evidence.length ? r.evidence.map(e => '<li class="flex gap-1.5"><span class="text-teal-600 dark:text-teal-400">•</span><span>' + esc(e) + '</span></li>').join('') : '<li class="text-slate-400">None</li>') +
+          '</ul>' +
+        '</div>' +
+        '<div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl">' +
+          '<div class="font-semibold text-navy-900 dark:text-white mb-1.5">Important limitations</div>' +
+          '<ul class="space-y-1 text-slate-700 dark:text-slate-300">' +
+            r.limitations.map(l => '<li class="flex gap-1.5"><span class="text-amber-600 dark:text-amber-400">•</span><span>' + esc(l) + '</span></li>').join('') +
+          '</ul>' +
+        '</div>' +
+      '</div>' +
+      '<div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">' +
+        '<div class="text-xs text-slate-600 dark:text-slate-400">' +
+          '<span class="font-semibold text-navy-900 dark:text-white">Suggested specialist:</span> ' + esc(r.specialist) +
+        '</div>' +
+        '<a href="https://pubmed.ncbi.nlm.nih.gov/?term=' + encodeURIComponent(r.pubmedQuery) + '" target="_blank" rel="noopener" class="text-xs font-semibold text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1">' +
+          '<span>Research on PubMed</span><i data-lucide="external-link" class="w-3.5 h-3.5"></i>' +
+        '</a>' +
+      '</div>';
+    container.appendChild(card);
+  });
+
+  const research = $('research-cards-container');
+  research.innerHTML = '';
+  results.slice(0, 4).forEach(r => {
+    const card = document.createElement('div');
+    card.className = 'card-print bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl p-5 flex flex-col justify-between';
+    card.innerHTML =
+      '<div>' +
+        '<div class="text-xs font-medium text-teal-700 dark:text-teal-400 mb-1.5">PubMed · ' + esc(r.category) + '</div>' +
+        '<h5 class="font-semibold text-navy-900 dark:text-white text-sm mb-2">' + esc(r.name) + '</h5>' +
+        '<p class="text-xs text-slate-600 dark:text-slate-400 mb-3">Search peer-reviewed literature for ' + esc(r.name.toLowerCase()) + '.</p>' +
+      '</div>' +
+      '<a href="https://pubmed.ncbi.nlm.nih.gov/?term=' + encodeURIComponent(r.pubmedQuery) + '" target="_blank" rel="noopener" class="text-xs font-semibold text-teal-600 dark:text-teal-400 hover:text-teal-700 flex items-center gap-1 mt-1">' +
+        '<span>Open on PubMed</span><i data-lucide="external-link" class="w-3.5 h-3.5"></i>' +
+      '</a>';
+    research.appendChild(card);
+  });
+  refreshIcons();
+}
+
+function cancelEmergencyEvaluation(){
+  AppState.pendingEmergencyInput=null; AppState.pendingEmergencyFlags=[];
+  switchView('screening');
+  toast('Evaluation cancelled. If symptoms are severe or worsening, seek urgent medical care now.','warn',6000);
+}
+function continueEmergencyEvaluation(){
+  const input=AppState.pendingEmergencyInput;
+  if(!input){switchView('screening');return;}
+  // User acknowledgement never removes the emergency warning.
+  AppState.lastInput=input;
+  const results=runScreening(input);
+  AppState.lastResults=results;
+  $('critical-result-warning').classList.remove('hidden');
+  if(!results.length){
+    toast('No educational match was generated. This does not reduce the urgency of the warning. Seek medical care now.','warn',7000);
+    switchView('emergency'); return;
+  }
+  populateResultsDashboard(results,input);
+  $('critical-result-warning').classList.remove('hidden');
+  if($('save-record').checked){
+    const record={id:Date.now()+'-'+Math.random().toString(36).slice(2,8),created_at:new Date().toISOString(),input,results,criticalWarning:true,criticalFlags:AppState.pendingEmergencyFlags.slice()};
+    AppState.records.unshift(record); saveRecords();
+    toast('Evaluation saved with a critical warning. Seek emergency care now.','warn',6000);
+  }
+  AppState.pendingEmergencyInput=null;
+  switchView('results');
+}
+
+/* ============================================================
+   RECORDS
+   ============================================================ */
+function renderRecords(){
+  const list = $('records-list');
+  if(!list) return;
+  const q = ($('record-search')?.value || '').trim().toLowerCase();
+  let records = AppState.records.slice();
+  if(q){
+    records = records.filter(r =>
+      (r.results || []).some(x => x.name.toLowerCase().includes(q) || x.category.toLowerCase().includes(q))
+    );
+  }
+
+  if(!records.length){
+    list.innerHTML = AppState.records.length
+      ? '<div class="text-center py-12 text-slate-500 dark:text-slate-400"><i data-lucide="search" class="w-8 h-8 mx-auto mb-2 opacity-50"></i><p class="text-sm">No matching records.</p></div>'
+      : '<div class="text-center py-12 text-slate-500 dark:text-slate-400"><i data-lucide="file-text" class="w-8 h-8 mx-auto mb-2 opacity-50"></i><p class="text-sm">No saved records yet.</p><p class="text-xs mt-1">Run a screening with "Save this screening" enabled. Sign in to sync your history across devices.</p></div>';
+    refreshIcons();
+    return;
+  }
+
+  list.innerHTML = records.map(r => {
+    const top = (r.results || [])[0];
+    const summary = top ? top.name + ' (' + top.matchLevel.label + ' · ' + top.confidence + '%)' : 'No match';
+    return (
+      '<div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 hover:border-teal-300 dark:hover:border-teal-700 transition">' +
+        '<div class="flex items-start justify-between gap-3">' +
+          '<div class="min-w-0 flex-1">' +
+            '<button onclick="openRecordDetail(\'' + esc(r.id) + '\')" class="text-left text-teal-600 dark:text-teal-400 font-semibold text-sm hover:underline">' +
+              '🔍 ' + esc(summary) +
+            '</button>' +
+            '<div class="text-xs text-slate-500 dark:text-slate-400 mt-1">' +
+              fmtDate(r.created_at) + ' · ' + (r.input?.symptoms || []).length + ' symptoms · ' + Object.values(r.input?.labs || {}).filter(v => v != null).length + ' lab values' +
+            '</div>' +
+          '</div>' +
+          '<button onclick="deleteRecord(\'' + esc(r.id) + '\')" class="text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 px-2 py-1 rounded transition flex-shrink-0" aria-label="Delete">' +
+            '<i data-lucide="trash-2" class="w-3.5 h-3.5"></i>' +
+          '</button>' +
+        '</div>' +
+      '</div>'
+    );
+  }).join('');
+  refreshIcons();
+}
+
+function openRecordDetail(id){
+  const r = AppState.records.find(x => x.id === id);
+  if(!r) return;
+  const top = (r.results || [])[0];
+  $('detail-title').textContent = top ? top.name : 'Screening Record';
+  $('detail-sub').textContent = fmtDate(r.created_at) + (top ? ' · ' + top.matchLevel.label + ' · ' + top.confidence + '%' : '');
+
+  let html = '<div class="space-y-4">';
+  if(r.input){
+    html +=
+      '<div class="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-4">' +
+        '<h4 class="text-sm font-semibold text-navy-900 dark:text-white mb-2">Inputs</h4>' +
+        '<div class="grid grid-cols-2 gap-2 text-xs text-slate-700 dark:text-slate-300">' +
+          '<div><span class="text-slate-500 dark:text-slate-400">Age:</span> ' + (r.input.age ?? '—') + '</div>' +
+          '<div><span class="text-slate-500 dark:text-slate-400">Sex:</span> ' + (r.input.sex || '—') + '</div>' +
+          '<div class="col-span-2"><span class="text-slate-500 dark:text-slate-400">Symptoms:</span> ' + ((r.input.symptoms || []).map(s => esc(SYMPTOM_MAP[s]?.name || s)).join(', ') || '—') + '</div>' +
+          '<div class="col-span-2"><span class="text-slate-500 dark:text-slate-400">Labs:</span> ' + (Object.entries(r.input.labs || {}).filter(([,v]) => v != null).map(([k,v]) => k.replace(/_/g,' ') + ': ' + v).join(' · ') || '—') + '</div>' +
+        '</div>' +
+      '</div>';
+
+    (r.results || []).forEach(m => {
+      html +=
+        '<div class="border border-slate-200 dark:border-slate-700 rounded-xl p-4">' +
+          '<div class="flex items-start justify-between gap-2 mb-2">' +
+            '<div>' +
+              '<div class="text-xs font-semibold text-teal-600 dark:text-teal-400 uppercase">' + esc(m.category) + '</div>' +
+              '<div class="font-bold text-navy-900 dark:text-white">' + esc(m.name) + '</div>' +
+            '</div>' +
+            '<span class="text-xs font-semibold px-2 py-0.5 rounded-full border whitespace-nowrap ' + m.matchLevel.cls + '">' + m.confidence + '%</span>' +
+          '</div>' +
+          '<p class="text-xs text-slate-600 dark:text-slate-300 mb-2">' + esc(m.explanation) + '</p>' +
+          '<div class="text-xs text-slate-700 dark:text-slate-300"><span class="font-semibold">Specialist:</span> ' + esc(m.specialist) + '</div>' +
+          '<div class="mt-2"><div class="bar"><i style="width:' + m.confidence + '%"></i></div></div>' +
+        '</div>';
+    });
+  }
+  html += '</div>';
+  $('detail-body').innerHTML = html;
+  $('detail-modal').classList.remove('hidden');
+  refreshIcons();
+}
+function closeDetailModal(){ $('detail-modal').classList.add('hidden'); }
+
+async function deleteRecord(id){
+  if(!confirm('Delete this record?')) return;
+  AppState.records = AppState.records.filter(r => r.id !== id);
+  if(currentFirebaseUser && firebaseDb) firebaseDb.collection('users').doc(currentFirebaseUser.uid).collection('screenings').doc(String(id)).delete().catch(err=>console.error('Cloud delete failed:',err));
+  saveRecords();
+  renderRecords();
+  toast('Record deleted.', 'success', 2000);
+}
+
+async function clearAllRecords(){
+  if(!confirm('Clear ALL saved records? This cannot be undone.')) return;
+  if(currentFirebaseUser && firebaseDb){ try { const snap=await firebaseDb.collection('users').doc(currentFirebaseUser.uid).collection('screenings').get(); const batch=firebaseDb.batch(); snap.forEach(doc=>batch.delete(doc.ref)); await batch.commit(); } catch(err){ console.error('Cloud clear failed:',err); toast('Could not clear cloud records. Check Firestore rules.', 'warn'); } }
+  AppState.records = [];
+  saveRecords();
+  renderRecords();
+  toast('All records cleared.', 'success', 2000);
+}
+
+function exportRecords(){
+  if(!AppState.records.length){ toast('No records to export.', 'warn'); return; }
+  try {
+    const blob = new Blob([JSON.stringify(AppState.records, null, 2)], { type:'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'diagnova-records-' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+    toast('Records exported as JSON.', 'success');
+  } catch {
+    toast('Export failed.', 'error');
+  }
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeDetailModal(); });
+
+(function init(){
+  loadRecords();
+  renderSymptomChips();
+  renderSelectedSymptoms();
+  renderRecords();
+  refreshIcons();
+})();
+</script>
+
+<script>
+/* ============================================================
+   OPTIONAL REAL AUTHENTICATION — Firebase Authentication
+   1) Create a Firebase project and register a Web app.
+   2) Enable Authentication > Sign-in method > Email/Password.
+   3) Replace the placeholder values below with your Firebase web config.
+   This single HTML file does not provide a secure server by itself.
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "YOUR_FIREBASE_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  appId: "YOUR_FIREBASE_APP_ID"
+};
+let firebaseAuth = null;
+let firebaseDb = null;
+let currentFirebaseUser = null;
+let authMode = 'signin';
+let authConfigured = false;
+
+function isFirebaseConfigured(){
+  return firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.appId &&
+    !Object.values(firebaseConfig).some(v => String(v).startsWith('YOUR_'));
+}
+function initFirebaseAuth(){
+  if(!isFirebaseConfigured() || typeof firebase === 'undefined' || !firebase.initializeApp) return;
+  try {
+    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    firebaseAuth = firebase.auth();
+    firebaseDb = firebase.firestore();
+    authConfigured = true;
+    firebaseAuth.onAuthStateChanged(async user => {
+      currentFirebaseUser = user || null;
+      const btn = document.getElementById('authNavBtn');
+      if(!btn) return;
+      if(user){
+        const display = user.displayName || (user.email || 'Account').split('@')[0];
+        btn.textContent = display.length > 18 ? display.slice(0,16)+'…' : display;
+        btn.title = 'Signed in as ' + (user.email || '');
+        btn.onclick = () => {
+          if(confirm('You are signed in as ' + (user.email || '') + '. Sign out?')) firebaseAuth.signOut().then(() => showAuthStatus('Signed out successfully.','success')).catch(showAuthError);
+        };
+        btn.setAttribute('aria-label','Account menu; click to sign out');
+      } else {
+        btn.textContent = 'Sign in';
+        btn.title = 'Sign in or create an account';
+        btn.onclick = () => openAuthModal('signin');
+        btn.setAttribute('aria-label','Sign in or create account');
+      }
+      updateProfileAuthUI(user);
+      if(user){
+        try { await loadCloudPatientData(user); }
+        catch(err){ console.error('Could not load patient data from Firestore:', err); toast('Signed in, but cloud records could not load. Check Firestore setup and rules.', 'warn', 6000); }
+      } else {
+        setProfileSyncBadge('Not signed in');
+        const notice=document.getElementById('profileAuthNotice'); if(notice) notice.textContent='Sign in to save your profile and screening history securely to your account.';
+        if(isFirebaseConfigured()){ AppState.records=[]; try{localStorage.removeItem(STORAGE_KEYS.records);}catch(e){} renderRecords(); fillProfileForm({}); }
+      }
+    });
+  } catch(err){ console.error('Firebase initialization failed:',err); }
+}
+function openAuthModal(mode='signin'){
+  setAuthMode(mode);
+  const modal=document.getElementById('authModal');
+  modal.classList.remove('hidden');
+  document.body.style.overflow='hidden';
+  const warning=document.getElementById('authConfigWarning');
+  warning.classList.toggle('hidden', isFirebaseConfigured() && authConfigured);
+  if(!isFirebaseConfigured() || !authConfigured) warning.classList.remove('hidden');
+  document.getElementById('authStatus').classList.add('hidden');
+  setTimeout(()=>document.getElementById('authEmail').focus(),50);
+  if(typeof refreshIcons==='function') refreshIcons();
+}
+function closeAuthModal(){
+  document.getElementById('authModal').classList.add('hidden');
+  document.body.style.overflow='';
+}
+function setAuthMode(mode){
+  authMode=mode;
+  const isSignup=mode==='signup', isReset=mode==='reset';
+  document.getElementById('authTitle').textContent=isSignup?'Create your account':isReset?'Reset your password':'Welcome back';
+  document.getElementById('authSubtitle').textContent=isSignup?'Create an account with your email address.':isReset?'We will email you a password reset link.':'Sign in to manage your account.';
+  document.getElementById('authTabs').classList.toggle('hidden',isReset);
+  document.getElementById('authTabSignIn').setAttribute('aria-selected',String(mode==='signin'));
+  document.getElementById('authTabSignUp').setAttribute('aria-selected',String(isSignup));
+  document.getElementById('authNameWrap').classList.toggle('hidden',!isSignup);
+  document.getElementById('authConfirmWrap').classList.toggle('hidden',!isSignup);
+  document.getElementById('authForgotWrap').classList.toggle('hidden',isSignup||isReset);
+  document.getElementById('authPasswordWrap').classList.toggle('hidden',isReset);
+  document.getElementById('authPassword').required=!isReset;
+  document.getElementById('authConfirm').required=isSignup;
+  document.getElementById('authPassword').autocomplete=isSignup?'new-password':'current-password';
+  document.getElementById('authSubmitBtn').innerHTML=(isSignup?'<i data-lucide="user-plus" class="w-4 h-4"></i><span>Create account</span>':isReset?'<i data-lucide="mail" class="w-4 h-4"></i><span>Send reset link</span>':'<i data-lucide="log-in" class="w-4 h-4"></i><span>Sign in</span>');
+  const warning=document.getElementById('authConfigWarning');
+  if(!isFirebaseConfigured() || !authConfigured) warning.classList.remove('hidden');
+  else warning.classList.add('hidden');
+  const status=document.getElementById('authStatus'); status.classList.add('hidden');
+  if(typeof refreshIcons==='function') refreshIcons();
+}
+function showAuthStatus(message,type='success'){
+  const el=document.getElementById('authStatus');
+  if(!el) return;
+  el.textContent=message;
+  el.className='text-sm rounded-xl p-3 mt-4 '+(type==='error'?'bg-red-50 text-red-800 dark:bg-red-950/50 dark:text-red-200':'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-200');
+}
+function showAuthError(err){
+  const messages={
+    'auth/invalid-email':'Enter a valid email address.',
+    'auth/user-not-found':'No account was found for that email.',
+    'auth/wrong-password':'Incorrect email or password.',
+    'auth/invalid-credential':'Incorrect email or password.',
+    'auth/email-already-in-use':'An account already exists for this email.',
+    'auth/weak-password':'Choose a stronger password with at least 8 characters.',
+    'auth/too-many-requests':'Too many attempts. Please wait and try again.',
+    'auth/network-request-failed':'Network error. Check your internet connection.',
+    'auth/operation-not-allowed':'Enable Email/Password sign-in in Firebase Console.',
+    'auth/invalid-api-key':'The Firebase API key is invalid. Check firebaseConfig.'
+  };
+  showAuthStatus(messages[err && err.code] || (err && err.message) || 'Authentication failed. Please try again.','error');
+}
+async function submitAuth(event){
+  event.preventDefault();
+  if(!authConfigured || !firebaseAuth){
+    showAuthStatus('Firebase is not configured yet. Add your project config in firebaseConfig and enable Email/Password sign-in.','error');
+    return;
+  }
+  const email=document.getElementById('authEmail').value.trim();
+  const password=document.getElementById('authPassword').value;
+  const name=document.getElementById('authName').value.trim();
+  const confirmPassword=document.getElementById('authConfirm').value;
+  const btn=document.getElementById('authSubmitBtn');
+  const old=btn.innerHTML;
+  btn.disabled=true; btn.textContent='Please wait…';
+  try{
+    if(authMode==='signup'){
+      if(password.length<8) throw {code:'auth/weak-password'};
+      if(password!==confirmPassword){showAuthStatus('Passwords do not match.','error');return;}
+      const credential=await firebaseAuth.createUserWithEmailAndPassword(email,password);
+      if(name) await credential.user.updateProfile({displayName:name});
+      try { await credential.user.sendEmailVerification(); } catch(e){ console.warn('Verification email could not be sent',e); }
+      showAuthStatus('Account created. Check your email for a verification link.','success');
+      setTimeout(closeAuthModal,1200);
+    }else if(authMode==='reset'){
+      await firebaseAuth.sendPasswordResetEmail(email);
+      showAuthStatus('If an account exists for this email, a password reset link has been sent.','success');
+    }else{
+      await firebaseAuth.signInWithEmailAndPassword(email,password);
+      showAuthStatus('Signed in successfully.','success');
+      setTimeout(closeAuthModal,700);
+    }
+  }catch(err){showAuthError(err);}
+  finally{btn.disabled=false;btn.innerHTML=old;if(typeof refreshIcons==='function')refreshIcons();}
+}
+async function sendPasswordReset(){
+  setAuthMode('reset');
+}
+
+// Firestore-backed patient profile and screening history. All paths are scoped to the authenticated UID.
+function setProfileSyncBadge(text){ const el=document.getElementById('profileSyncBadge'); if(el) el.textContent=text; }
+function updateProfileAuthUI(user){
+  const notice=document.getElementById('profileAuthNotice');
+  const email=document.getElementById('profileEmail');
+  if(email) email.value=user?.email || '';
+  if(notice) notice.textContent=user ? 'Signed in as '+(user.email||'your account')+'. Profile and screening history can sync to your private account.' : 'Sign in to save your profile securely to your account.';
+  setProfileSyncBadge(user ? 'Account connected' : 'Not signed in');
+}
+function showProfileStatus(message,type='success'){
+  const el=document.getElementById('profileStatus'); if(!el)return; el.textContent=message;
+  el.className='sm:col-span-2 text-sm rounded-xl p-3 '+(type==='error'?'bg-red-50 text-red-800 dark:bg-red-950/50 dark:text-red-200':'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-200');
+}
+function profileFormData(){
+  return { fullName:$('profileFullName').value.trim(), phone:$('profilePhone').value.trim(), email:currentFirebaseUser?.email||$('profileEmail').value.trim(), dob:$('profileDob').value, gender:$('profileGender').value, bloodGroup:$('profileBlood').value, emergencyContact:$('profileEmergency').value.trim(), conditions:$('profileConditions').value.trim(), allergies:$('profileAllergies').value.trim(), medications:$('profileMedications').value.trim(), updatedAt:firebase.firestore.FieldValue.serverTimestamp() };
+}
+function fillProfileForm(data={}){
+  const map={profileFullName:'fullName',profilePhone:'phone',profileDob:'dob',profileGender:'gender',profileBlood:'bloodGroup',profileEmergency:'emergencyContact',profileConditions:'conditions',profileAllergies:'allergies',profileMedications:'medications'};
+  Object.entries(map).forEach(([id,key])=>{const el=$(id);if(el)el.value=data[key]||'';});
+  if($('profileEmail')) $('profileEmail').value=currentFirebaseUser?.email||data.email||'';
+}
+async function savePatientProfile(event){
+  event.preventDefault();
+  if(!currentFirebaseUser || !firebaseDb){ openAuthModal('signin'); showProfileStatus('Please sign in first to securely save your patient profile.','error'); return; }
+  const btn=$('profileSaveBtn'); btn.disabled=true; const old=btn.innerHTML; btn.textContent='Saving securely…';
+  try{
+    const data=profileFormData();
+    await firebaseDb.collection('users').doc(currentFirebaseUser.uid).set({profile:data, email:currentFirebaseUser.email||'', updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+    if(currentFirebaseUser.displayName!==data.fullName) await currentFirebaseUser.updateProfile({displayName:data.fullName});
+    showProfileStatus('Profile saved securely to your Firebase account.','success'); setProfileSyncBadge('Profile saved');
+  }catch(err){console.error(err);showProfileStatus('Could not save profile. Verify Firestore is enabled and the security rules are installed.','error');}
+  finally{btn.disabled=false;btn.innerHTML=old;if(typeof refreshIcons==='function')refreshIcons();}
+}
+async function loadCloudPatientData(user){
+  if(!firebaseDb||!user)return;
+  setProfileSyncBadge('Loading…');
+  const root=firebaseDb.collection('users').doc(user.uid);
+  const profileSnap=await root.get();
+  if(profileSnap.exists){const data=profileSnap.data()||{};fillProfileForm(data.profile||{});} else {fillProfileForm({fullName:user.displayName||'',email:user.email||''});}
+  const snap=await root.collection('screenings').get();
+  const cloud=snap.docs.map(d=>d.data()).filter(r=>r&&r.id);
+  // Cloud records are the source of truth after sign-in. Do not auto-import anonymous browser records: a shared device could expose one person's health data to another account.
+  AppState.records=cloud.sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
+  renderRecords(); setProfileSyncBadge('Cloud synced');
+}
+async function syncRecordsToCloud(){
+  if(!currentFirebaseUser||!firebaseDb||!AppState.records.length)return;
+  const col=firebaseDb.collection('users').doc(currentFirebaseUser.uid).collection('screenings');
+  // Firestore batches are limited to 500 writes; keep each batch comfortably below that.
+  for(let i=0;i<AppState.records.length;i+=400){const batch=firebaseDb.batch();AppState.records.slice(i,i+400).forEach(r=>batch.set(col.doc(String(r.id)),r,{merge:true}));await batch.commit();}
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.getElementById('authModal').classList.contains('hidden'))closeAuthModal();if(e.key==='Escape')closeCareRequest();});
+document.addEventListener('DOMContentLoaded',initFirebaseAuth);
+</script>
+
+
+<!-- ============ DIAGNOVA BACKEND LAYER (replaces Firebase + localStorage sync) ============
+  Talks to app.py. Served from the backend (http://127.0.0.1:8000) it uses same-origin; opened any other
+  way (file://, Live Server) it targets DIAGNOVA_API below. Screening itself still runs in-browser. -->
+<script>
+(function(){
+  const API = window.DIAGNOVA_API || (/^https?:$/.test(location.protocol) && !['3000','5173','5500'].includes(location.port) ? '' : 'http://127.0.0.1:8000'); // same-origin when served by uvicorn on any port
+  const TK='diagnova_token';
+  let token=null; try{token=sessionStorage.getItem(TK);}catch(e){}
+  const $$=id=>document.getElementById(id);
+
+  async function api(path,opts={}){
+    const h={...(opts.body&&!(opts.body instanceof FormData)?{'Content-Type':'application/json'}:{}),...(token?{Authorization:'Bearer '+token}:{})};
+    let r; try{ r=await fetch(API+path,{...opts,headers:h,body:opts.body instanceof FormData||!opts.body?opts.body:JSON.stringify(opts.body)}); }
+    catch(e){ throw new Error('Cannot reach the DiagNova server. Is app.py running?'); }
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok){
+      if(r.status===401&&token&&!path.startsWith('/api/auth/login')) signOut(true);
+      const d=data.detail; throw new Error(typeof d==='string'?d:Array.isArray(d)&&d[0]?(d[0].msg||'').replace(/^Value error, /,''):'Request failed ('+r.status+')');
+    }
+    return data;
+  }
+
+  // ---- session / nav -------------------------------------------------------------------------
+  window.isFirebaseConfigured=()=>true;   // hides the "configure Firebase" warning in the auth modal
+  authConfigured=true;
+  function setUser(u){
+    currentFirebaseUser=u?{email:u.email,displayName:u.display_name}:null;   // existing code reads these two fields
+    const b=$$('authNavBtn'); if(b){
+      if(u){ const d=u.display_name||u.email.split('@')[0]; b.textContent=d.length>18?d.slice(0,16)+'…':d; b.title='Signed in as '+u.email;
+        b.onclick=()=>{ if(confirm('You are signed in as '+u.email+'. Sign out?')) signOut(); }; }
+      else { b.textContent='Sign in'; b.title='Sign in or create an account'; b.onclick=()=>openAuthModal('signin'); }
+    }
+    updateProfileAuthUI(currentFirebaseUser);
+  }
+  function startSession(d){ token=d.token; try{sessionStorage.setItem(TK,token);}catch(e){} setUser(d.user); return loadAccountData(); }
+  function signOut(expired){
+    token=null; try{sessionStorage.removeItem(TK);}catch(e){}
+    AppState.records=[]; renderRecords(); fillProfileForm({}); setUser(null); setProfileSyncBadge('Not signed in');
+    toast(expired===true?'Your session expired. Please sign in again.':'Signed out successfully.', expired===true?'warn':'success');
+  }
+  async function loadAccountData(){
+    setProfileSyncBadge('Loading…');
+    try{
+      const [recs,prof]=await Promise.all([api('/api/records?limit=500'),api('/api/profile')]);
+      AppState.records=recs.records; renderRecords(); fillProfileForm(prof.profile||{}); setProfileSyncBadge('Account synced');
+    }catch(e){ setProfileSyncBadge('Sync failed'); toast(e.message,'warn',5000); }
+  }
+
+  // ---- auth modal ----------------------------------------------------------------------------
+  window.submitAuth=async function(ev){
+    ev.preventDefault();
+    const email=$$('authEmail').value.trim(), pw=$$('authPassword').value, btn=$$('authSubmitBtn'), old=btn.innerHTML;
+    if(authMode==='reset'){ showAuthStatus('Password reset is not available in this version. Contact the site administrator.','error'); return; }
+    if(authMode==='signup'){
+      if(pw.length<8){ showAuthStatus('Choose a password with at least 8 characters.','error'); return; }
+      if(pw!==$$('authConfirm').value){ showAuthStatus('Passwords do not match.','error'); return; }
+    }
+    btn.disabled=true; btn.textContent='Please wait…';
+    try{
+      const d=authMode==='signup'
+        ? await api('/api/auth/register',{method:'POST',body:{display_name:$$('authName').value.trim()||email.split('@')[0],email,password:pw}})
+        : await api('/api/auth/login',{method:'POST',body:{email,password:pw}});
+      await startSession(d);
+      showAuthStatus(authMode==='signup'?'Account created. You are signed in.':'Signed in successfully.','success');
+      setTimeout(closeAuthModal,800);
+    }catch(e){ showAuthStatus(e.message,'error'); }
+    finally{ btn.disabled=false; btn.innerHTML=old; refreshIcons(); }
+  };
+
+  // ---- records (screening history) -----------------------------------------------------------
+  const localSave=()=>{ try{localStorage.setItem(STORAGE_KEYS.records,JSON.stringify(AppState.records));}catch{ toast('Could not save record (storage full?).','error'); } };
+  window.saveRecords=function(){
+    if(!token) return localSave();                      // anonymous: browser-only, as before
+    const r=AppState.records[0]; if(!r) return;        // newest record (screening just saved)
+    api('/api/records',{method:'POST',body:{id:r.id,kind:'screening',created_at:r.created_at,input:r.input,results:r.results,red_flags:r.red_flags||[]}})
+      .catch(e=>toast('Saved in this session, but not on the server: '+e.message,'warn',6000));
+  };
+  window.deleteRecord=async function(id){
+    if(!confirm('Delete this record?')) return;
+    try{ if(token) await api('/api/records/'+encodeURIComponent(id),{method:'DELETE'}); }
+    catch(e){ if(!/not found/i.test(e.message)){ toast(e.message,'error'); return; } }
+    AppState.records=AppState.records.filter(r=>r.id!==id); if(!token) localSave(); renderRecords(); toast('Record deleted.','success',2000);
+  };
+  window.clearAllRecords=async function(){
+    if(!confirm('Clear ALL saved records? This cannot be undone.')) return;
+    try{ if(token) await api('/api/records?confirm=true',{method:'DELETE'}); }catch(e){ toast(e.message,'error'); return; }
+    AppState.records=[]; if(!token) localSave(); renderRecords(); toast('All records cleared.','success',2000);
+  };
+
+  // ---- profile -------------------------------------------------------------------------------
+  window.savePatientProfile=async function(ev){
+    ev.preventDefault();
+    if(!token){ openAuthModal('signin'); showProfileStatus('Please sign in first to save your patient profile.','error'); return; }
+    const v=id=>($$(id)?.value||'').trim(), btn=$$('profileSaveBtn'), old=btn.innerHTML; btn.disabled=true; btn.textContent='Saving…';
+    try{
+      await api('/api/profile',{method:'PUT',body:{fullName:v('profileFullName'),phone:v('profilePhone'),dob:v('profileDob'),gender:v('profileGender'),bloodGroup:v('profileBlood'),
+        emergencyContact:v('profileEmergency'),conditions:v('profileConditions'),allergies:v('profileAllergies'),medications:v('profileMedications')}});
+      showProfileStatus('Profile saved to your account.','success'); setProfileSyncBadge('Profile saved');
+    }catch(e){ showProfileStatus(e.message,'error'); }
+    finally{ btn.disabled=false; btn.innerHTML=old; refreshIcons(); }
+  };
+
+  // ---- care requests: stored on the server when signed in (still NOT sent to any provider) ---
+  const origCare=window.submitCareRequest;
+  window.submitCareRequest=async function(ev){
+    if(!token) return origCare(ev);
+    ev.preventDefault(); const v=id=>($$(id)?.value||'').trim(), st=$$('careRequestStatus'); st.classList.remove('hidden');
+    try{
+      await api('/api/care-requests',{method:'POST',body:{name:v('carePatientName'),phone:v('carePatientPhone'),specialty:v('careSpecialty'),type:v('careConsultType'),date:v('carePreferredDate')||null,area:v('careAreaInput'),reason:v('careReason')}});
+      st.textContent='Request saved to your account. It has NOT been sent to a doctor or clinic; contact a verified provider directly for an appointment.';
+      st.className='text-sm rounded-xl p-3 bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-200';
+    }catch(e){ st.textContent=e.message; st.className='text-sm rounded-xl p-3 bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-200'; }
+  };
+
+  // ---- report upload -> server parses PDF/TXT/DOCX and auto-fills the lab fields -------------
+  const origFiles=window.handleScreeningFiles;
+  window.handleScreeningFiles=async function(input){
+    origFiles(input);
+    const files=Array.from(input.files||[]), st=$$('ai-report-status'); if(!files.length||!st) return;
+    if(!token){ st.textContent='Files stay in this browser. Sign in to have lab values read from your reports automatically.'; return; }
+    st.textContent='Reading your reports on your DiagNova server…';
+    try{
+      const fd=new FormData(); files.forEach(f=>fd.append('files',f));
+      const d=await api('/api/parse-report',{method:'POST',body:fd});
+      const map={fasting_glucose:'lab-glucose',hemoglobin:'lab-hemoglobin',ldl:'lab-ldl',systolic_bp:'lab-sysbp',diastolic_bp:'lab-diabp'}, got=[];
+      for(const [k,id] of Object.entries(map)) if(d.parsed_labs[k]!=null&&$$(id)){ $$(id).value=d.parsed_labs[k]; got.push(k.replace(/_/g,' ')); }
+      st.textContent=(got.length?'Filled in: '+got.join(', ')+'. Please verify against your report. ':'No lab values were recognised. ')+(d.warnings||[]).join(' ');
+    }catch(e){ st.textContent=e.message; }
+  };
+
+  // ---- boot: restore session, or warn if backend is down -------------------------------------
+  document.addEventListener('DOMContentLoaded',async()=>{
+    try{ await fetch(API+'/healthz'); }catch(e){ toast('DiagNova server not reachable. Screening works, but sign-in and cloud records are unavailable.','warn',7000); return; }
+    if(!token) return;
+    try{ const d=await api('/api/auth/me'); setUser(d.user); await loadAccountData(); }catch(e){}
+  });
+})();
+</script>
+</body>
+</html>

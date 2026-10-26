@@ -1,0 +1,14 @@
+fastapi>=0.110
+uvicorn[standard]>=0.27
+pydantic>=2.5
+python-multipart>=0.0.9
+PyJWT>=2.7
+requests>=2.31
+python-dotenv>=1.0
+pdfplumber>=0.10
+pypdf>=4.0
+Pillow>=10.0
+
+# Optional extras (not needed to run):
+# pytesseract        # OCR for scanned reports; also install the Tesseract program for Windows
+# onnxruntime numpy  # real image models in models\*.onnx
